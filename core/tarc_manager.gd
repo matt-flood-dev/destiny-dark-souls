@@ -34,15 +34,15 @@ func _process(delta: float) -> void:
 
 func start_earth_cooldown() -> void:
 	earth_cooldown_timer = EARTH_COOLDOWN_MAX
-	
-	
+
+
 func start_wind_cooldown() -> void:
 	wind_cooldown_timer = WIND_COOLDOWN_MAX
-	
-	
+
+
 func is_earth_ready() -> bool:
 	return earth_cooldown_timer == 0.0
-	
-	
+
+
 func is_wind_ready() -> bool:
 	return wind_cooldown_timer == 0.0

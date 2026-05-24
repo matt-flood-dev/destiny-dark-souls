@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bms5eigdynhbc" path="res://src/player/player.gd" id="1_4anbu"]
 [ext_resource type="Script" uid="uid://dl6q4pbfacmdq" path="res://src/player/state_machine.gd" id="2_mf2ua"]
 [ext_resource type="Script" uid="uid://2v86r7371clp" path="res://src/player/idle_state.gd" id="3_244u8"]
+[ext_resource type="Script" uid="uid://bqi0upofvw44d" path="res://src/player/move_state.gd" id="4_244u8"]
 
 [node name="Node3D" type="Node3D" unique_id=117092549]
 
@@ -15,3 +16,6 @@ initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="Player/StateMachine" unique_id=1573499565]
 script = ExtResource("3_244u8")
+
+[node name="Move" type="Node" parent="Player/StateMachine" unique_id=1583874289]
+script = ExtResource("4_244u8")
