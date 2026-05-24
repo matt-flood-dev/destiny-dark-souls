@@ -40,3 +40,8 @@ var wind_cooldown_timer: float = 0.0
 func _process(delta: float) -> void:
 	earth_cooldown_timer = max(earth_cooldown_timer - delta, 0.0)
 	wind_cooldown_timer = max(wind_cooldown_timer - delta, 0.0)
+
+
+# =============================================================================
+# PUBLIC API FUNCTIONS
+# =============================================================================
