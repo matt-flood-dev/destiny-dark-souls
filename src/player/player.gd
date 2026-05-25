@@ -22,4 +22,4 @@ var is_holding_action: bool = false
 # ENGINE RUNTIME LOOPS
 # =============================================================================
 func _process(_delta: float) -> void:
-	move_input = Input.get_vector("move_forward", "move_backward", "move_left", "move_right")
+	move_input = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")

@@ -19,7 +19,7 @@ func _ready() -> void:
 	for child in get_children():
 		if child is PlayerState:
 			states[child.name.to_lower()] = child
-			child.player = owner as Player
+			child.player = get_parent() as Player
 			child.state_machine = self
 
 	if initial_state:
