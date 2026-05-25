@@ -1,6 +1,6 @@
 extends PlayerState
 
-# --- STATE LIFECYCLE LOOPS ---
+# --- ENGINE RUNTIME LOOPS ---
 func enter() -> void:
 	print("Player entered Move state.")
 
@@ -9,8 +9,9 @@ func exit() -> void:
 	print("Player exited Move state.")
 
 
-# --- ENGINE RUNTIME LOOPS ---
-func update(_delta: float) -> void:
+func update(delta: float) -> void:
+	super(delta)
+
 	if not player:
 		return
 
