@@ -5,17 +5,29 @@
 [ext_resource type="Script" uid="uid://2v86r7371clp" path="res://src/player/idle_state.gd" id="3_244u8"]
 [ext_resource type="Script" uid="uid://bqi0upofvw44d" path="res://src/player/move_state.gd" id="4_244u8"]
 
-[node name="Node3D" type="Node3D" unique_id=117092549]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_244u8"]
 
-[node name="Player" type="CharacterBody3D" parent="." unique_id=1939726896]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_5f2sf"]
+
+[node name="Player" type="CharacterBody3D" unique_id=1939726896]
 script = ExtResource("1_4anbu")
 
-[node name="StateMachine" type="Node" parent="Player" unique_id=1883853336 node_paths=PackedStringArray("initial_state")]
+[node name="StateMachine" type="Node" parent="." unique_id=1883853336 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("2_mf2ua")
 initial_state = NodePath("Idle")
 
-[node name="Idle" type="Node" parent="Player/StateMachine" unique_id=1573499565]
+[node name="Idle" type="Node" parent="StateMachine" unique_id=1573499565]
 script = ExtResource("3_244u8")
 
-[node name="Move" type="Node" parent="Player/StateMachine" unique_id=1583874289]
+[node name="Move" type="Node" parent="StateMachine" unique_id=1583874289]
 script = ExtResource("4_244u8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1894515319]
+shape = SubResource("CapsuleShape3D_244u8")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1037956942]
+mesh = SubResource("CapsuleMesh_5f2sf")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1632780687]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -0.2)
+current = true
