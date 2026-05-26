@@ -8,6 +8,7 @@ const HOLD_TIME_THRESHOLD: float = 0.20
 const SPEED: float = 5.0
 const ACCELERATION: float = 40.0
 const FRICTION: float = 25.0
+const JUMP_VELOCITY: float = 4.5
 
 @export var mouse_sensitivity: float = 0.002
 

@@ -15,11 +15,17 @@ func update(delta: float) -> void:
 	if not player:
 		return
 
+	if Input.is_action_just_pressed("jump"):
+		state_machine.change_state("jump")
+		return
+
 	if player.move_input != Vector2.ZERO:
 		if Input.is_action_pressed("sprint"):
 			state_machine.change_state("sprint")
+			return
 		else:
 			state_machine.change_state("move")
+			return
 
 
 func physics_update(delta: float) -> void:

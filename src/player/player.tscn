@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://2v86r7371clp" path="res://src/player/idle_state.gd" id="3_244u8"]
 [ext_resource type="Script" uid="uid://bqi0upofvw44d" path="res://src/player/move_state.gd" id="4_244u8"]
 [ext_resource type="Script" uid="uid://cj4mgthlum4ld" path="res://src/player/sprint_state.gd" id="5_5f2sf"]
+[ext_resource type="Script" uid="uid://cxjqsbe4n6hqs" path="res://src/player/jump_state.gd" id="6_jiejy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_244u8"]
 
@@ -25,6 +26,9 @@ script = ExtResource("4_244u8")
 
 [node name="Sprint" type="Node" parent="StateMachine" unique_id=691213941]
 script = ExtResource("5_5f2sf")
+
+[node name="Jump" type="Node" parent="StateMachine" unique_id=1746952116]
+script = ExtResource("6_jiejy")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1894515319]
 shape = SubResource("CapsuleShape3D_244u8")
