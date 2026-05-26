@@ -1,18 +1,14 @@
 extends Node
 class_name StateMachine
 
-# =============================================================================
-# CONFIGURATIONS & STATES
-# =============================================================================
+# --- DATA TRACKING & SYSTEM REFS ---
 @export var initial_state: PlayerState
 
 var current_state: PlayerState
 var states: Dictionary = {}
 
 
-# =============================================================================
-# ENGINE RUNTIME LOOPS
-# =============================================================================
+# --- ENGINE RUNTIME LOOPS ---
 func _ready() -> void:
 	await owner.ready
 
@@ -37,9 +33,7 @@ func _physics_process(delta: float) -> void:
 		current_state.physics_update(delta)
 
 
-# =============================================================================
-# PUBLIC API FUNCTIONS
-# =============================================================================
+# --- STATE TRANSITION LOGIC ---
 func change_state(new_state_name: String) -> void:
 	var target_state: PlayerState = states.get(new_state_name.to_lower())
 

@@ -2,11 +2,11 @@ extends PlayerState
 
 # --- ENGINE RUNTIME LOOPS ---
 func enter() -> void:
-	print("Player entered Move state.")
+	print("Player entered Sprint state.")
 
 
 func exit() -> void:
-	print("Player exited Move state.")
+	print("Player exited Sprint state.")
 
 
 func update(delta: float) -> void:
@@ -15,11 +15,8 @@ func update(delta: float) -> void:
 	if not player:
 		return
 
-	if player.move_input == Vector2.ZERO:
-		state_machine.change_state("idle")
-
-	if Input.is_action_pressed("sprint"):
-		state_machine.change_state("sprint")
+	if not Input.is_action_pressed("sprint"):
+		state_machine.change_state("move")
 
 
 func physics_update(delta: float) -> void:
@@ -29,7 +26,7 @@ func physics_update(delta: float) -> void:
 	if not player.is_on_floor():
 		player.velocity.y -= player.gravity * delta
 
-	var target_velocity: Vector3 = player.raw_direction * player.SPEED
+	var target_velocity: Vector3 = player.raw_direction * (player.SPEED * 1.6)
 
 	player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
 	player.velocity.z = move_toward(player.velocity.z, target_velocity.z, player.ACCELERATION * delta)
