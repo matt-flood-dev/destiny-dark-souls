@@ -6,6 +6,9 @@
 [ext_resource type="Script" uid="uid://bqi0upofvw44d" path="res://src/player/move_state.gd" id="4_244u8"]
 [ext_resource type="Script" uid="uid://cj4mgthlum4ld" path="res://src/player/sprint_state.gd" id="5_5f2sf"]
 [ext_resource type="Script" uid="uid://cxjqsbe4n6hqs" path="res://src/player/jump_state.gd" id="6_jiejy"]
+[ext_resource type="Script" uid="uid://dh2rur8jl1p4x" path="res://src/player/grav_shift_state.gd" id="7_l271a"]
+[ext_resource type="Script" uid="uid://tpy7jax0rvt2" path="res://src/player/fault_slip_state.gd" id="8_8ydov"]
+[ext_resource type="Script" uid="uid://dy3ekpu1miqmg" path="res://src/player/wind_shear_state.gd" id="9_ylhto"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_244u8"]
 
@@ -29,6 +32,15 @@ script = ExtResource("5_5f2sf")
 
 [node name="Jump" type="Node" parent="StateMachine" unique_id=1746952116]
 script = ExtResource("6_jiejy")
+
+[node name="Grav_Shift" type="Node" parent="StateMachine" unique_id=1918710905]
+script = ExtResource("7_l271a")
+
+[node name="Fault_Slip" type="Node" parent="StateMachine" unique_id=1367279375]
+script = ExtResource("8_8ydov")
+
+[node name="Wind_Shear" type="Node" parent="StateMachine" unique_id=2116801518]
+script = ExtResource("9_ylhto")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1894515319]
 shape = SubResource("CapsuleShape3D_244u8")

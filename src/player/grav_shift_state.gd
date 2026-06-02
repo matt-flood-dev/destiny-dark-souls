@@ -24,11 +24,6 @@ func update(delta: float) -> void:
 	if not player:
 		return
 
-	if Input.is_action_just_pressed("jump") and player.can_double_jump:
-		player.can_double_jump = false
-		state_machine.change_state("grav_shift")
-		return
-
 	if player.is_on_floor():
 		if player.move_input != Vector2.ZERO:
 			if Input.is_action_pressed("sprint"):
@@ -46,8 +41,7 @@ func physics_update(delta: float) -> void:
 	if not player:
 		return
 
-	if not player.is_on_floor():
-		player.velocity.y -= player.gravity * delta
+	apply_gravity(delta)
 
 	var target_velocity: Vector3 = player.raw_direction * current_air_speed
 
@@ -58,10 +52,9 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
-	print("Player entered Jump state.")
+	print("Player entered GravShift state.")
 	if player:
 		player.velocity.y = player.JUMP_VELOCITY
-		player.can_double_jump = true
 
 		var horizontal_velocity: Vector2 = Vector2(player.velocity.x, player.velocity.z)
 		current_air_speed = horizontal_velocity.length()
@@ -71,7 +64,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited Jump state.")
+	print("Player exited GravShift state.")
 
 
 # --- PRIVATE METHODS ---

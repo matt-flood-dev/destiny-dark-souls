@@ -4,7 +4,7 @@ extends Node
 const OVER_RAD_MAX: float = 100.0
 const ULTRA_VENT_RELEASE_RATE: float = 15.0
 const EARTH_COOLDOWN_MAX: float = 4.0
-const WIND_COOLDOWN_MAX: float = 6.0
+const AIR_COOLDOWN_MAX: float = 6.0
 
 
 # --- ACTIVE CORE SYSTEM STATES ---
@@ -23,13 +23,13 @@ var slot_grenade_element: String = "None"
 var slot_ultra_vent_element: String = "None"
 
 var earth_cooldown_timer: float = 0.0
-var wind_cooldown_timer: float = 0.0
+var air_cooldown_timer: float = 0.0
 
 
-# --- ENGINE RUNTIME LOOPS ---
+# --- UPDATE LOOPS ---
 func _process(delta: float) -> void:
 	earth_cooldown_timer = max(earth_cooldown_timer - delta, 0.0)
-	wind_cooldown_timer = max(wind_cooldown_timer - delta, 0.0)
+	air_cooldown_timer = max(air_cooldown_timer - delta, 0.0)
 
 
 # --- PUBLIC API FUNCTIONS ---
@@ -37,13 +37,13 @@ func start_earth_cooldown() -> void:
 	earth_cooldown_timer = EARTH_COOLDOWN_MAX
 
 
-func start_wind_cooldown() -> void:
-	wind_cooldown_timer = WIND_COOLDOWN_MAX
+func start_air_cooldown() -> void:
+	air_cooldown_timer = AIR_COOLDOWN_MAX
 
 
 func is_earth_ready() -> bool:
 	return earth_cooldown_timer == 0.0
 
 
-func is_wind_ready() -> bool:
-	return wind_cooldown_timer == 0.0
+func is_air_ready() -> bool:
+	return air_cooldown_timer == 0.0
