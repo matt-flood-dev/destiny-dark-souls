@@ -29,6 +29,10 @@ func update(delta: float) -> void:
 	if Input.is_action_just_pressed("jump"):
 		state_machine.change_state("jump")
 		return
+		
+	if Input.is_action_just_pressed("crouch"):
+		state_machine.change_state("crouch")
+		return
 
 	if player.move_input == Vector2.ZERO:
 		state_machine.change_state("idle")

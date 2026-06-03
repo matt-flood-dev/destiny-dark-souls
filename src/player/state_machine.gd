@@ -12,6 +12,7 @@ class_name StateMachine
 # --- DATA & REFERENCES ---
 
 var current_state: PlayerState
+var previous_state: PlayerState
 var states: Dictionary = {}
 
 
@@ -55,6 +56,7 @@ func change_state(new_state_name: String) -> void:
 
 	if current_state:
 		current_state.exit()
+		previous_state = current_state
 
 	current_state = target_state
 	current_state.enter()

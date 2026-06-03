@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://bqi0upofvw44d" path="res://src/player/move_state.gd" id="4_244u8"]
 [ext_resource type="Script" uid="uid://cj4mgthlum4ld" path="res://src/player/sprint_state.gd" id="5_5f2sf"]
 [ext_resource type="Script" uid="uid://cxjqsbe4n6hqs" path="res://src/player/jump_state.gd" id="6_jiejy"]
+[ext_resource type="Script" uid="uid://dgr0dwgu5ekuw" path="res://src/player/crouch_state.gd" id="6_ylhto"]
+[ext_resource type="Script" uid="uid://dbdp6lespi83x" path="res://src/player/slide_state.gd" id="7_cwolq"]
 [ext_resource type="Script" uid="uid://dh2rur8jl1p4x" path="res://src/player/grav_shift_state.gd" id="7_l271a"]
 [ext_resource type="Script" uid="uid://tpy7jax0rvt2" path="res://src/player/fault_slip_state.gd" id="8_8ydov"]
 [ext_resource type="Script" uid="uid://dy3ekpu1miqmg" path="res://src/player/wind_shear_state.gd" id="9_ylhto"]
@@ -29,6 +31,12 @@ script = ExtResource("4_244u8")
 
 [node name="Sprint" type="Node" parent="StateMachine" unique_id=691213941]
 script = ExtResource("5_5f2sf")
+
+[node name="Crouch" type="Node" parent="StateMachine" unique_id=30735854]
+script = ExtResource("6_ylhto")
+
+[node name="Slide" type="Node" parent="StateMachine" unique_id=2064235493]
+script = ExtResource("7_cwolq")
 
 [node name="Jump" type="Node" parent="StateMachine" unique_id=1746952116]
 script = ExtResource("6_jiejy")

@@ -15,6 +15,7 @@ const FRICTION: float = 25.0
 const JUMP_VELOCITY: float = 4.5
 
 @export var mouse_sensitivity: float = 0.002
+@export var camera_lerp_speed: float = 10.0
 
 
 # --- DATA & REFERENCES ---
@@ -29,6 +30,8 @@ var double_tap_timer: float = 0.0
 var action_hold_time: float = 0.0
 var is_holding_action: bool = false
 var can_double_jump: bool = false
+
+var target_camera_y: float = 0.8
 
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var camera:  Camera3D = $Camera3D
@@ -59,8 +62,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # --- UPDATE LOOPS ---
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_handle_look_rotation()
+
+	if camera:
+		camera.position.y = lerp(camera.position.y, target_camera_y, camera_lerp_speed * delta)
 
 	move_input = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 
