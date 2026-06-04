@@ -24,6 +24,10 @@ func update(delta: float) -> void:
 	if not player:
 		return
 
+	if Input.is_action_just_pressed("crouch"):
+		state_machine.change_state("slide")
+		return
+
 	if Input.is_action_just_pressed("dodge"):
 		state_machine.change_state("fault_slip")
 		return

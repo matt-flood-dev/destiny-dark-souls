@@ -35,6 +35,7 @@ var target_camera_y: float = 0.8
 
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var camera:  Camera3D = $Camera3D
+@onready var tarc_manager: TarcManager = $TarcManager
 
 
 # --- LIFECYCLE CALLBACKS ---

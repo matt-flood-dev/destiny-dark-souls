@@ -5,7 +5,7 @@ extends PlayerState
 
 # --- CONFIGURATION & EXPORTS ---
 
-@export var crouch_speed: float = 2.5
+@export var crouch_move_speed: float = 2.5
 @export var crouch_height: float = 1.0
 @export var stand_height: float = 2.0
 
@@ -85,7 +85,7 @@ func physics_update(delta: float) -> void:
 		player.velocity.z = slip_direction.z * fault_slip_state.slip_speed
 	else:
 		if player.move_input != Vector2.ZERO:
-			var target_velocity: Vector3 = player.raw_direction * crouch_speed
+			var target_velocity: Vector3 = player.raw_direction * crouch_move_speed
 			player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
 			player.velocity.z = move_toward(player.velocity.z, target_velocity.z, player.ACCELERATION * delta)
 		else:

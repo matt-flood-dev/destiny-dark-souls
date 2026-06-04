@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://dh2rur8jl1p4x" path="res://src/player/grav_shift_state.gd" id="7_l271a"]
 [ext_resource type="Script" uid="uid://tpy7jax0rvt2" path="res://src/player/fault_slip_state.gd" id="8_8ydov"]
 [ext_resource type="Script" uid="uid://dy3ekpu1miqmg" path="res://src/player/wind_shear_state.gd" id="9_ylhto"]
+[ext_resource type="Script" uid="uid://7a6owkthig7d" path="res://src/systems/tarc/tarc_manager.gd" id="12_cwolq"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_244u8"]
 
@@ -18,6 +19,11 @@
 
 [node name="Player" type="CharacterBody3D" unique_id=1939726896]
 script = ExtResource("1_4anbu")
+mouse_sensitivity = null
+camera_lerp_speed = null
+
+[node name="TarcManager" type="Node" parent="." unique_id=199103172]
+script = ExtResource("12_cwolq")
 
 [node name="StateMachine" type="Node" parent="." unique_id=1883853336 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("2_mf2ua")
