@@ -38,7 +38,7 @@ func update(delta: float) -> void:
 		state_machine.change_state("idle")
 		return
 
-	if Input.is_action_pressed("sprint"):
+	if Input.is_action_pressed("sprint") and player.move_input.y < 0 and player.move_input.x == 0:
 		state_machine.change_state("sprint")
 		return
 

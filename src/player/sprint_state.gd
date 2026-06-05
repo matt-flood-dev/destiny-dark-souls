@@ -49,6 +49,9 @@ func physics_update(delta: float) -> void:
 	if not player:
 		return
 
+	if player.move_input.y >= 0 or player.move_input.x !=0:
+		state_machine.change_state("move")
+
 	apply_gravity(delta)
 
 	var target_velocity: Vector3 = player.raw_direction * (player.SPEED * sprint_multiplier)
