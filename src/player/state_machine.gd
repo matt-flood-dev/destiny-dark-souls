@@ -19,9 +19,11 @@ var states: Dictionary = {}
 # --- LIFECYCLE CALLBACKS ---
 
 func _ready() -> void:
+	await get_parent().ready
+
 	for child in get_children():
 		if child is PlayerState:
-			states[child.name.to_lower()] = child
+			states[child.name] = child
 			child.player = get_parent() as Player
 			child.state_machine = self
 
@@ -48,10 +50,13 @@ func _physics_process(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func change_state(new_state_name: String) -> void:
-	var target_state: PlayerState = states.get(new_state_name.to_lower())
+	var target_state: PlayerState = states.get(new_state_name)
 
 	if not target_state:
 		push_error("StateMachine: State '" + new_state_name + "' does not exist.")
+		return
+
+	if current_state == target_state:
 		return
 
 	if current_state:

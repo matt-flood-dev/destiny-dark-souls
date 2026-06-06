@@ -1,5 +1,5 @@
 extends PlayerState
-class_name JumpState
+class_name FallState
 
 # --- SIGNALS ---
 
@@ -36,9 +36,13 @@ func update(delta: float) -> void:
 		state_machine.change_state("GravShift")
 		return
 
-	if player.velocity.y <= 0.0:
-		state_machine.change_state("Fall")
-		return
+	if player.is_on_floor():
+		if player.move_input != Vector2.ZERO:
+			state_machine.change_state("Move")
+			return
+		else:
+			state_machine.change_state("Idle")
+			return
 
 
 func physics_update(delta: float) -> void:
@@ -55,11 +59,8 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
-	print("Player entered Jump state.")
+	print("Player entered Fall state.")
 	if player:
-		player.velocity.y = player.JUMP_VELOCITY
-		can_double_jump = true
-
 		var horizontal_velocity: Vector2 = Vector2(player.velocity.x, player.velocity.z)
 		current_air_speed = horizontal_velocity.length()
 
@@ -68,7 +69,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited Jump state.")
+	print("Player exited Fall state.")
 
 
 # --- PRIVATE METHODS ---

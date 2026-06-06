@@ -1,4 +1,5 @@
 extends PlayerState
+class_name MoveState
 
 # --- SIGNALS ---
 
@@ -23,23 +24,23 @@ func update(delta: float) -> void:
 		return
 
 	if Input.is_action_just_pressed("dodge"):
-		state_machine.change_state("fault_slip")
+		state_machine.change_state("FaultSlip")
 		return
 
 	if Input.is_action_just_pressed("jump"):
-		state_machine.change_state("jump")
+		state_machine.change_state("Jump")
 		return
 		
 	if Input.is_action_just_pressed("crouch"):
-		state_machine.change_state("crouch")
+		state_machine.change_state("Crouch")
 		return
 
 	if player.move_input == Vector2.ZERO:
-		state_machine.change_state("idle")
+		state_machine.change_state("Idle")
 		return
 
 	if Input.is_action_pressed("sprint") and player.move_input.y < 0 and player.move_input.x == 0:
-		state_machine.change_state("sprint")
+		state_machine.change_state("Sprint")
 		return
 
 
@@ -59,6 +60,11 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered Move state.")
+
+	if state_machine:
+		var wind_shear: PlayerState = state_machine.get_node_or_null("WindShear") as WindShearState
+		if wind_shear:
+			wind_shear.has_sheared = false
 
 
 func exit() -> void:

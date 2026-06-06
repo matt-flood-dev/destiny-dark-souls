@@ -1,4 +1,5 @@
 extends PlayerState
+class_name SlideState
 
 # --- SIGNALS ---
 
@@ -6,8 +7,8 @@ extends PlayerState
 # --- CONFIGURATION & EXPORTS ---
 
 @export var slide_boost_multiplier: float = 2.4
-@export var slide_friction: float = 4.5
-@export var slide_duration: float = 0.8
+@export var slide_friction: float = 3.5
+@export var slide_duration: float = 0.65
 
 @export var crouch_height: float = 1.0
 @export var stand_height: float = 2.0
@@ -36,12 +37,8 @@ func update(delta: float) -> void:
 
 	current_time += delta
 
-	if Input.is_action_just_pressed("jump") and player.is_on_floor():
-		state_machine.change_state("jump")
-		return
-
 	if current_time >= slide_duration:
-		state_machine.change_state("crouch")
+		state_machine.change_state("Crouch")
 		return
 
 
@@ -51,17 +48,15 @@ func physics_update(delta: float) -> void:
 
 	apply_gravity(delta)
 
-	var target_velocity: Vector3 = Vector3.ZERO
-	
-	player.velocity.x = lerp(player.velocity.x, target_velocity.x, slide_friction * delta)
-	player.velocity.z = lerp(player.velocity.z, target_velocity.z, slide_friction * delta)
-
+	player.velocity.x = player.velocity.x * exp(-slide_friction * delta)
+	player.velocity.z = player.velocity.z * exp(-slide_friction * delta)
 
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
 	print("Player entered Slide state.")
 	if player:
+
 		current_time = 0.0
 
 		if player.raw_direction != Vector3.ZERO:

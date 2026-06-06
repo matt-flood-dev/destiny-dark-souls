@@ -6,9 +6,6 @@ class_name Player
 
 # --- CONFIGURATION & EXPORTS ---
 
-const DOUBLE_TAP_TIME: float = 0.25
-const HOLD_TIME_THRESHOLD: float = 0.20
-
 const SPEED: float = 5.0
 const ACCELERATION: float = 40.0
 const FRICTION: float = 25.0
@@ -26,11 +23,6 @@ var forward: Vector3 = Vector3.ZERO
 var right: Vector3 = Vector3.ZERO
 
 var mouse_input: Vector2 = Vector2.ZERO
-var double_tap_timer: float = 0.0
-var action_hold_time: float = 0.0
-var is_holding_action: bool = false
-var can_double_jump: bool = false
-
 var target_camera_y: float = 0.8
 
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -55,6 +47,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+	if event.is_action_pressed("restart_scene"):
+		get_tree().reload_current_scene()
+		return
 
 	if event.is_action_pressed("ui_text_backspace") or (event is InputEventKey and event.pressed and event.keycode == KEY_Q):
 		if Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:

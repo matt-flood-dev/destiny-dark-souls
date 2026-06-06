@@ -19,20 +19,16 @@ const AIR_COOLDOWN_MAX: float = 6.0
 
 # --- DATA & REFERENCES ---
 
-# Active Core System States
 var is_over_rad_primed: bool = false
 var is_gravity_jump_used: bool = false
 
-# Slots & Active Elements
 var slot_melee_element: String = "None"
 var slot_grenade_element: String = "None"
 var slot_ultra_vent_element: String = "None"
 
-# Active Timers
 var earth_cooldown_timer: float = 0.0
 var air_cooldown_timer: float = 0.0
 
-# Encapsulated Over-Rad Property with standard Godot 4 Setter
 var current_over_rad: float = 0.0:
 	set(value):
 		current_over_rad = clamp(value, 0.0, OVER_RAD_MAX)

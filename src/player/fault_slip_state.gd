@@ -1,4 +1,5 @@
 extends PlayerState
+class_name FaultSlipState
 
 # --- SIGNALS ---
 
@@ -32,10 +33,10 @@ func update(delta: float) -> void:
 
 	if current_time >= slip_duration:
 		if player.move_input != Vector2.ZERO:
-			state_machine.change_state("move")
+			state_machine.change_state("Move")
 			return
 		else:
-			state_machine.change_state("idle")
+			state_machine.change_state("Idle")
 			return
 
 

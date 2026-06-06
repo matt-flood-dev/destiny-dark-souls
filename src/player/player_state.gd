@@ -6,11 +6,19 @@ class_name PlayerState
 
 # --- CONFIGURATION & EXPORTS ---
 
+const DOUBLE_TAP_TIME: float = 0.25
+const HOLD_TIME_THRESHOLD: float = 0.20
+
 
 # --- DATA & REFERENCES ---
 
 var player: Player
 var state_machine: StateMachine
+
+static var can_double_jump: bool = false
+var double_tap_timer: float = 0.0
+var action_hold_time: float = 0.0
+var is_holding_action: bool = false
 
 
 # --- LIFECYCLE CALLBACKS ---
