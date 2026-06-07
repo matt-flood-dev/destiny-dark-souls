@@ -54,6 +54,10 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered FaultSlip state.")
+	
+	can_double_jump = false
+	can_air_dodge = true
+	
 	if player:
 		current_time = 0.0
 

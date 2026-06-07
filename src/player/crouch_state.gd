@@ -19,6 +19,10 @@ class_name CrouchState
 var collision_shape: CollisionShape3D
 var just_entered: bool = true
 
+var is_slipping: bool = false
+var slip_timer: float = 0.0
+var slip_direction: Vector3 = Vector3.ZERO
+
 var fault_slip_state: FaultSlipState
 
 
@@ -39,16 +43,25 @@ func update(delta: float) -> void:
 		just_entered = false
 		return
 
+	if is_slipping and fault_slip_state:
+		slip_timer += delta
+		if slip_timer >= fault_slip_state.slip_duration:
+			is_slipping = false
+			player.velocity.x *= 0.5
+			player.velocity.z *= 0.5
+		return
+
 	if Input.is_action_just_pressed("dodge"):
-		state_machine.change_state("FaultSlip")
+		is_slipping = true
+		slip_timer = 0.0
+		if player.raw_direction != Vector3.ZERO:
+			slip_direction = player.raw_direction
+		else:
+			slip_direction = player.global_transform.basis.z.normalized()
 		return
 
-	if Input.is_action_just_pressed("jump") and player.is_on_floor():
+	if Input.is_action_just_pressed("jump"):
 		state_machine.change_state("Jump")
-		return
-
-	if Input.is_action_pressed("sprint") and player.move_input != Vector2.ZERO:
-		state_machine.change_state("Sprint")
 		return
 
 	if Input.is_action_just_pressed("crouch"):
@@ -66,19 +79,26 @@ func physics_update(delta: float) -> void:
 
 	apply_gravity(delta)
 
-	if player.move_input != Vector2.ZERO:
-		var target_velocity: Vector3 = player.raw_direction * crouch_move_speed
-		player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
-		player.velocity.z = move_toward(player.velocity.z, target_velocity.z, player.ACCELERATION * delta)
+	if is_slipping and fault_slip_state:
+		player.velocity.x = slip_direction.x * fault_slip_state.slip_speed
+		player.velocity.z = slip_direction.z * fault_slip_state.slip_speed
 	else:
-		player.velocity.x = move_toward(player.velocity.x, 0.0, player.FRICTION * delta)
-		player.velocity.z = move_toward(player.velocity.z, 0.0, player.FRICTION * delta)
+		if player.move_input != Vector2.ZERO:
+			var target_velocity: Vector3 = player.raw_direction * crouch_move_speed
+			player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
+			player.velocity.z = move_toward(player.velocity.z, target_velocity.z, player.ACCELERATION * delta)
+		else:
+			player.velocity.x = move_toward(player.velocity.x, 0.0, player.FRICTION * delta)
+			player.velocity.z = move_toward(player.velocity.z, 0.0, player.FRICTION * delta)
 
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
 	print("Player entered Crouch state.")
 	just_entered = true
+
+	can_double_jump = false
+	can_air_dodge = true
 
 	if player:
 		player.target_camera_y = camera_crouch_y
@@ -91,13 +111,12 @@ func enter() -> void:
 	if state_machine:
 		fault_slip_state = state_machine.get_node_or_null("FaultSlip") as FaultSlipState
 
-		var wind_shear: PlayerState = state_machine.get_node_or_null("WindShear") as WindShearState
-		if wind_shear:
-			wind_shear.has_sheared = false
-
 
 func exit() -> void:
 	print("Player exited Crouch state.")
+
+	if is_slipping:
+		is_slipping = false
 
 	if player:
 		player.target_camera_y = camera_stand_y

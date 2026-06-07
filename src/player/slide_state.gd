@@ -51,10 +51,15 @@ func physics_update(delta: float) -> void:
 	player.velocity.x = player.velocity.x * exp(-slide_friction * delta)
 	player.velocity.z = player.velocity.z * exp(-slide_friction * delta)
 
+
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
 	print("Player entered Slide state.")
+	
+	can_double_jump = false
+	can_air_dodge = true
+	
 	if player:
 
 		current_time = 0.0

@@ -46,6 +46,10 @@ func physics_update(delta: float) -> void:
 
 	apply_gravity(delta)
 
+	if player.is_falling:
+		state_machine.change_state("Fall")
+		return
+
 	player.velocity.x = move_toward(player.velocity.x, 0.0, player.FRICTION * delta)
 	player.velocity.z = move_toward(player.velocity.z, 0.0, player.FRICTION * delta)
 
@@ -54,11 +58,8 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered Idle state.")
-
-	if state_machine:
-		var wind_shear: PlayerState = state_machine.get_node_or_null("WindShear") as WindShearState
-		if wind_shear:
-			wind_shear.has_sheared = false
+	can_double_jump = false
+	can_air_dodge = true
 
 
 func exit() -> void:

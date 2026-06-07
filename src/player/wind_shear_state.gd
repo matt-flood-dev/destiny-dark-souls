@@ -15,7 +15,6 @@ class_name WindShearState
 
 var shear_direction: Vector3 = Vector3.ZERO
 var current_time: float = 0.0
-var has_sheared: bool = false
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -33,12 +32,7 @@ func update(delta: float) -> void:
 
 	current_time += delta
 
-	if player.is_on_floor():
-		has_sheared = false
-		if player.move_input != Vector2.ZERO:
-			state_machine.change_state("Move")
-		else:
-			state_machine.change_state("Idle")
+	if has_landed():
 		return
 
 	if Input.is_action_just_pressed("jump") and can_double_jump:
@@ -68,7 +62,7 @@ func enter() -> void:
 		return
 
 	current_time = 0.0
-	has_sheared = true
+	can_air_dodge = false
 
 	player.velocity.y = 0.0
 

@@ -25,11 +25,9 @@ func update(delta: float) -> void:
 	if not player:
 		return
 
-	if Input.is_action_just_pressed("dodge"):
-		var wind_shear = state_machine.get_node_or_null("WindShear") as WindShearState
-		if wind_shear and not wind_shear.has_sheared:
-			state_machine.change_state("WindShear")
-			return
+	if Input.is_action_just_pressed("dodge") and can_air_dodge:
+		state_machine.change_state("WindShear")
+		return
 
 	if Input.is_action_just_pressed("jump") and can_double_jump:
 		can_double_jump = false
@@ -43,6 +41,9 @@ func update(delta: float) -> void:
 
 func physics_update(delta: float) -> void:
 	if not player:
+		return
+
+	if has_landed():
 		return
 
 	apply_gravity(delta)

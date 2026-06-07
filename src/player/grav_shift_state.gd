@@ -25,19 +25,16 @@ func update(delta: float) -> void:
 	if not player:
 		return
 
-	if Input.is_action_just_pressed("dodge"):
-		var wind_shear = state_machine.get_node_or_null("WindShear") as WindShearState
-		if wind_shear and not wind_shear.has_sheared:
-			state_machine.change_state("WindShear")
-			return
+	if has_landed():
+		return
 
-	if player.is_on_floor():
-		if player.move_input != Vector2.ZERO:
-			state_machine.change_state("Move")
-			return
-		else:
-			state_machine.change_state("Idle")
-			return
+	if Input.is_action_just_pressed("dodge") and can_air_dodge:
+		state_machine.change_state("WindShear")
+		return
+
+	if player.velocity.y <= 0.0:
+		state_machine.change_state("Fall")
+		return
 
 
 func physics_update(delta: float) -> void:

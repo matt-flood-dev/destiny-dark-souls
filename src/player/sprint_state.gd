@@ -52,6 +52,7 @@ func physics_update(delta: float) -> void:
 
 	if player.move_input.y >= 0 or player.move_input.x !=0:
 		state_machine.change_state("Move")
+		return
 
 	apply_gravity(delta)
 
@@ -65,11 +66,8 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered Sprint state.")
-
-	if state_machine:
-		var wind_shear: PlayerState = state_machine.get_node_or_null("WindShear") as WindShearState
-		if wind_shear:
-			wind_shear.has_sheared = false
+	can_double_jump = false
+	can_air_dodge = true
 
 
 func exit() -> void:

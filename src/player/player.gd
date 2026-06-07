@@ -25,9 +25,10 @@ var right: Vector3 = Vector3.ZERO
 var mouse_input: Vector2 = Vector2.ZERO
 var target_camera_y: float = 0.8
 
+var is_falling: bool = false
+
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var camera:  Camera3D = $Camera3D
-@onready var tarc_manager: TarcManager = $TarcManager
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -83,6 +84,8 @@ func _process(delta: float) -> void:
 
 func _physics_process(_delta: float) -> void:
 	move_and_slide()
+
+	is_falling = not is_on_floor() and velocity.y <= 0.0
 
 
 # --- PUBLIC METHODS ---
