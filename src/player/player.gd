@@ -14,6 +14,30 @@ const JUMP_VELOCITY: float = 4.5
 @export var mouse_sensitivity: float = 0.002
 @export var camera_lerp_speed: float = 10.0
 
+@export_group("Crouch Settings")
+@export var crouch_move_speed: float = 2.5
+@export var crouch_height: float = 1.0
+@export var stand_height: float = 2.0
+@export var camera_crouch_y: float = 0.4
+@export var camera_stand_y: float = 0.8
+
+@export_group("FaultSlip Settings")
+@export var slip_speed: float = 16.0
+@export var slip_duration: float = 0.25
+
+@export_group("Sprint Settings")
+@export var sprint_multiplier: float = 1.6
+
+@export_group("Slide Settings")
+@export var slide_boost_multiplier: float = 2.4
+@export var slide_friction: float = 3.5
+@export var slide_duration: float = 0.65
+
+@export_group("WindShear Settings")
+@export var shear_speed: float = 18.0
+@export var shear_duration: float = 0.4
+@export var shear_friction: float = 2.5
+
 
 # --- DATA & REFERENCES ---
 
@@ -25,10 +49,9 @@ var right: Vector3 = Vector3.ZERO
 var mouse_input: Vector2 = Vector2.ZERO
 var target_camera_y: float = 0.8
 
-var is_falling: bool = false
-
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var camera:  Camera3D = $Camera3D
+@onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -85,10 +108,22 @@ func _process(delta: float) -> void:
 func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
-	is_falling = not is_on_floor() and velocity.y <= 0.0
-
 
 # --- PUBLIC METHODS ---
+
+func set_collision_height(target_height: float) -> void:
+	if not collision_shape or not collision_shape.shape:
+		push_error("Player: CollisionShape3D or its Shape resource is missing.")
+		return
+
+	if collision_shape.shape is CapsuleShape3D:
+		if not collision_shape.shape.is_local_to_scene():
+			collision_shape.shape = collision_shape.shape.duplicate()
+
+		collision_shape.shape.height = target_height
+
+		var target_y: float = (target_height - stand_height) / 2.0
+		collision_shape.position.y = target_y
 
 
 # --- PRIVATE METHODS ---

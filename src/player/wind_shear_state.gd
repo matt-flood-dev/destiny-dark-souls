@@ -6,10 +6,6 @@ class_name WindShearState
 
 # --- CONFIGURATION & EXPORTS ---
 
-@export var shear_speed: float = 18.0
-@export var shear_duration: float = 0.4
-@export var shear_friction: float = 2.5
-
 
 # --- DATA & REFERENCES ---
 
@@ -27,42 +23,37 @@ var current_time: float = 0.0
 
 func update(delta: float) -> void:
 	super(delta)
-	if not player:
-		return
 
 	current_time += delta
-
-	if has_landed():
-		return
 
 	if Input.is_action_just_pressed("jump") and can_double_jump:
 		can_double_jump = false
 		state_machine.change_state("GravShift")
 		return
 
-	if current_time >= shear_duration:
+	if current_time >= player.shear_duration:
 		state_machine.change_state("Fall")
 
 
 func physics_update(delta: float) -> void:
-	if not player:
+	if has_landed():
 		return
 
 	player.velocity.y = 0.0
 
-	player.velocity.x = player.velocity.x * exp(-shear_friction * delta)
-	player.velocity.z = player.velocity.z * exp(-shear_friction * delta)
+	player.velocity.x = player.velocity.x * exp(-player.shear_friction * delta)
+	player.velocity.z = player.velocity.z * exp(-player.shear_friction * delta)
 
 
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
 	print("Player entered WindShear state.")
-	if not player:
-		return
+
+	can_double_jump = true
+	can_air_dodge = false
 
 	current_time = 0.0
-	can_air_dodge = false
 
 	player.velocity.y = 0.0
 
@@ -73,8 +64,8 @@ func enter() -> void:
 		forward_vector.y = 0.0
 		shear_direction = forward_vector.normalized()
 
-	player.velocity.x = shear_direction.x * shear_speed
-	player.velocity.z = shear_direction.z * shear_speed
+	player.velocity.x = shear_direction.x * player.shear_speed
+	player.velocity.z = shear_direction.z * player.shear_speed
 
 
 func exit() -> void:

@@ -6,24 +6,14 @@ class_name CrouchState
 
 # --- CONFIGURATION & EXPORTS ---
 
-@export var crouch_move_speed: float = 2.5
-@export var crouch_height: float = 1.0
-@export var stand_height: float = 2.0
-
-@export var camera_crouch_y: float = 0.4
-@export var camera_stand_y: float = 0.8
-
 
 # --- DATA & REFERENCES ---
 
-var collision_shape: CollisionShape3D
 var just_entered: bool = true
 
 var is_slipping: bool = false
 var slip_timer: float = 0.0
 var slip_direction: Vector3 = Vector3.ZERO
-
-var fault_slip_state: FaultSlipState
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -36,16 +26,14 @@ var fault_slip_state: FaultSlipState
 
 func update(delta: float) -> void:
 	super(delta)
-	if not player:
-		return
 
 	if just_entered:
 		just_entered = false
 		return
 
-	if is_slipping and fault_slip_state:
+	if is_slipping:
 		slip_timer += delta
-		if slip_timer >= fault_slip_state.slip_duration:
+		if slip_timer >= player.slip_duration:
 			is_slipping = false
 			player.velocity.x *= 0.5
 			player.velocity.z *= 0.5
@@ -74,17 +62,18 @@ func update(delta: float) -> void:
 
 
 func physics_update(delta: float) -> void:
-	if not player:
+	if not player.is_on_floor():
+		state_machine.change_state("Fall")
 		return
 
-	apply_gravity(delta)
+	player.velocity.y = 0.0
 
-	if is_slipping and fault_slip_state:
-		player.velocity.x = slip_direction.x * fault_slip_state.slip_speed
-		player.velocity.z = slip_direction.z * fault_slip_state.slip_speed
+	if is_slipping:
+		player.velocity.x = slip_direction.x * player.slip_speed
+		player.velocity.z = slip_direction.z * player.slip_speed
 	else:
 		if player.move_input != Vector2.ZERO:
-			var target_velocity: Vector3 = player.raw_direction * crouch_move_speed
+			var target_velocity: Vector3 = player.raw_direction * player.crouch_move_speed
 			player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
 			player.velocity.z = move_toward(player.velocity.z, target_velocity.z, player.ACCELERATION * delta)
 		else:
@@ -97,19 +86,9 @@ func enter() -> void:
 	print("Player entered Crouch state.")
 	just_entered = true
 
-	can_double_jump = false
-	can_air_dodge = true
+	player.target_camera_y = player.camera_crouch_y
 
-	if player:
-		player.target_camera_y = camera_crouch_y
-
-		collision_shape = player.get_node_or_null("CollisionShape3D") as CollisionShape3D
-		if collision_shape and collision_shape.shape is CapsuleShape3D:
-			collision_shape.shape.height = crouch_height
-			collision_shape.position.y = -0.25
-
-	if state_machine:
-		fault_slip_state = state_machine.get_node_or_null("FaultSlip") as FaultSlipState
+	player.set_collision_height(player.crouch_height)
 
 
 func exit() -> void:
@@ -118,12 +97,9 @@ func exit() -> void:
 	if is_slipping:
 		is_slipping = false
 
-	if player:
-		player.target_camera_y = camera_stand_y
+	player.target_camera_y = player.camera_stand_y
 
-	if collision_shape and collision_shape.shape is CapsuleShape3D:
-		collision_shape.shape.height = stand_height
-		collision_shape.position.y = 0.0
+	player.set_collision_height(player.stand_height)
 
 
 # --- PRIVATE METHODS ---

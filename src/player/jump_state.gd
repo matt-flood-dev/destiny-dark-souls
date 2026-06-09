@@ -22,8 +22,6 @@ var current_air_speed: float = 5.0
 
 func update(delta: float) -> void:
 	super(delta)
-	if not player:
-		return
 
 	if Input.is_action_just_pressed("dodge") and can_air_dodge:
 		state_machine.change_state("WindShear")
@@ -34,19 +32,16 @@ func update(delta: float) -> void:
 		state_machine.change_state("GravShift")
 		return
 
-	if player.velocity.y <= 0.0:
-		state_machine.change_state("Fall")
-		return
-
 
 func physics_update(delta: float) -> void:
-	if not player:
-		return
-
 	if has_landed():
 		return
 
 	apply_gravity(delta)
+
+	if player.velocity.y <= 0.0:
+		state_machine.change_state("Fall")
+		return
 
 	var target_velocity: Vector3 = player.raw_direction * current_air_speed
 	player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
@@ -57,15 +52,16 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered Jump state.")
-	if player:
-		player.velocity.y = player.JUMP_VELOCITY
-		can_double_jump = true
 
-		var horizontal_velocity: Vector2 = Vector2(player.velocity.x, player.velocity.z)
-		current_air_speed = horizontal_velocity.length()
+	can_double_jump = true
 
-		if current_air_speed < player.SPEED:
-			current_air_speed = player.SPEED
+	player.velocity.y = player.JUMP_VELOCITY
+
+	var horizontal_velocity: Vector2 = Vector2(player.velocity.x, player.velocity.z)
+	current_air_speed = horizontal_velocity.length()
+
+	if current_air_speed < player.SPEED:
+		current_air_speed = player.SPEED
 
 
 func exit() -> void:

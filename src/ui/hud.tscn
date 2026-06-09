@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://wi8ji8be4xae"]
+
+[node name="HUD_Layer" type="CanvasLayer" unique_id=164575960]
+
+[node name="HUD_Control" type="Control" parent="." unique_id=447691885]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BottomLeft_MarginContainer" type="MarginContainer" parent="HUD_Control" unique_id=1028340768]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="Tactical_Layout" type="VBoxContainer" parent="HUD_Control/BottomLeft_MarginContainer" unique_id=1111733159]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="OverRad_Bar" type="ProgressBar" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout" unique_id=149125128]
+layout_mode = 2
+
+[node name="Abilities_Row" type="HBoxContainer" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout" unique_id=1951341042]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="Grenade_Slot" type="PanelContainer" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout/Abilities_Row" unique_id=988368799]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Melee_Slot" type="PanelContainer" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout/Abilities_Row" unique_id=1240010779]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2

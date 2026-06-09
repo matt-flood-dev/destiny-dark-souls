@@ -6,8 +6,6 @@ class_name SprintState
 
 # --- CONFIGURATION & EXPORTS ---
 
-@export var sprint_multiplier: float = 1.6
-
 
 # --- DATA & REFERENCES ---
 
@@ -22,8 +20,6 @@ class_name SprintState
 
 func update(delta: float) -> void:
 	super(delta)
-	if not player:
-		return
 
 	if Input.is_action_just_pressed("crouch"):
 		state_machine.change_state("Slide")
@@ -47,17 +43,17 @@ func update(delta: float) -> void:
 
 
 func physics_update(delta: float) -> void:
-	if not player:
+	if not player.is_on_floor():
+		state_machine.change_state("Fall")
 		return
+
+	player.velocity.y = 0.0
 
 	if player.move_input.y >= 0 or player.move_input.x !=0:
 		state_machine.change_state("Move")
 		return
 
-	apply_gravity(delta)
-
-	var target_velocity: Vector3 = player.raw_direction * (player.SPEED * sprint_multiplier)
-
+	var target_velocity: Vector3 = player.raw_direction * (player.SPEED * player.sprint_multiplier)
 	player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
 	player.velocity.z = move_toward(player.velocity.z, target_velocity.z, player.ACCELERATION * delta)
 
@@ -66,8 +62,6 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered Sprint state.")
-	can_double_jump = false
-	can_air_dodge = true
 
 
 func exit() -> void:

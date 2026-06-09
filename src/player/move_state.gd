@@ -20,8 +20,6 @@ class_name MoveState
 
 func update(delta: float) -> void:
 	super(delta)
-	if not player:
-		return
 
 	if Input.is_action_just_pressed("dodge"):
 		state_machine.change_state("FaultSlip")
@@ -45,17 +43,13 @@ func update(delta: float) -> void:
 
 
 func physics_update(delta: float) -> void:
-	if not player:
-		return
-
-	apply_gravity(delta)
-
-	if player.is_falling:
+	if not player.is_on_floor():
 		state_machine.change_state("Fall")
 		return
 
-	var target_velocity: Vector3 = player.raw_direction * player.SPEED
+	player.velocity.y = 0.0
 
+	var target_velocity: Vector3 = player.raw_direction * player.SPEED
 	player.velocity.x = move_toward(player.velocity.x, target_velocity.x, player.ACCELERATION * delta)
 	player.velocity.z = move_toward(player.velocity.z, target_velocity.z, player.ACCELERATION * delta)
 
@@ -64,8 +58,6 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered Move state.")
-	can_double_jump = false
-	can_air_dodge = true
 
 
 func exit() -> void:

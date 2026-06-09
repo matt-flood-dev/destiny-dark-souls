@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://dy3ekpu1miqmg" path="res://src/player/wind_shear_state.gd" id="9_ylhto"]
 [ext_resource type="Script" uid="uid://c1kgkeigw1ddu" path="res://src/player/fall_state.gd" id="10_2smqc"]
 [ext_resource type="Script" uid="uid://7a6owkthig7d" path="res://src/systems/tarc/tarc_manager.gd" id="12_cwolq"]
+[ext_resource type="PackedScene" uid="uid://wi8ji8be4xae" path="res://src/ui/hud.tscn" id="14_rl62b"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_244u8"]
 
@@ -67,3 +68,5 @@ mesh = SubResource("CapsuleMesh_5f2sf")
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1632780687]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -0.2)
 current = true
+
+[node name="HUD_Layer" parent="." unique_id=164575960 instance=ExtResource("14_rl62b")]
