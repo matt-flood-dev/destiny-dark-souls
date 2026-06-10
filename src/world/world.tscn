@@ -35,6 +35,36 @@ debug_color = Color(0, 0.6, 0.7019608, 0.41960785)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=787519049]
 mesh = SubResource("BoxMesh_1k4gi")
 
+[node name="Floor2" type="StaticBody3D" parent="." unique_id=1077644961]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor2" unique_id=507841964]
+shape = SubResource("BoxShape3D_kueii")
+debug_color = Color(0, 0.6, 0.7019608, 0.41960785)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor2" unique_id=1934518126]
+mesh = SubResource("BoxMesh_1k4gi")
+
+[node name="Floor3" type="StaticBody3D" parent="." unique_id=1803481459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2, -25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor3" unique_id=2138547163]
+shape = SubResource("BoxShape3D_kueii")
+debug_color = Color(0, 0.6, 0.7019608, 0.41960785)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor3" unique_id=604885408]
+mesh = SubResource("BoxMesh_1k4gi")
+
+[node name="Floor4" type="StaticBody3D" parent="." unique_id=1865427464]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor4" unique_id=1233598639]
+shape = SubResource("BoxShape3D_kueii")
+debug_color = Color(0, 0.6, 0.7019608, 0.41960785)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor4" unique_id=622041003]
+mesh = SubResource("BoxMesh_1k4gi")
+
 [node name="Player" parent="." unique_id=1939726896 instance=ExtResource("1_1k4gi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 

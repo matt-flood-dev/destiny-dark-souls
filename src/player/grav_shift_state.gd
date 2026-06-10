@@ -9,6 +9,8 @@ class_name GravShiftState
 
 # --- DATA & REFERENCES ---
 
+const AMBIENT_RAD_COST: float = 10.0
+
 var current_air_speed: float = 5.0
 
 
@@ -24,8 +26,10 @@ func update(delta: float) -> void:
 	super(delta)
 
 	if Input.is_action_just_pressed("dodge") and can_air_dodge:
-		state_machine.change_state("WindShear")
-		return
+		var tarc: TarcManager = player.get_node_or_null("TarcManager")
+		if tarc and tarc.current_ambient_rad >= AMBIENT_RAD_COST:
+			state_machine.change_state("WindShear")
+			return
 
 
 func physics_update(delta: float) -> void:
@@ -46,6 +50,11 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
+	var tarc: TarcManager = player.get_node_or_null("TarcManager")
+	if not tarc or not tarc.consume_ambient_rad(AMBIENT_RAD_COST):
+		state_machine.change_state("Fall")
+		return
+
 	print("Player entered GravShift state.")
 
 	player.velocity.y = player.JUMP_VELOCITY

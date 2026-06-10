@@ -3,6 +3,8 @@ class_name Player
 
 # --- SIGNALS ---
 
+signal health_changed(current: float, max_val: float)
+
 
 # --- CONFIGURATION & EXPORTS ---
 
@@ -13,6 +15,9 @@ const JUMP_VELOCITY: float = 4.5
 
 @export var mouse_sensitivity: float = 0.002
 @export var camera_lerp_speed: float = 10.0
+
+@export_group("Health Settings")
+@export var max_health: float = 100.0
 
 @export_group("Crouch Settings")
 @export var crouch_move_speed: float = 2.5
@@ -41,6 +46,8 @@ const JUMP_VELOCITY: float = 4.5
 
 # --- DATA & REFERENCES ---
 
+var current_health: float = 100.0
+
 var move_input: Vector2 = Vector2.ZERO
 var raw_direction: Vector3 = Vector3.ZERO
 var forward: Vector3 = Vector3.ZERO
@@ -58,6 +65,11 @@ var target_camera_y: float = 0.8
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+	current_health = max_health
+
+	await get_tree().process_frame
+	health_changed.emit(current_health, max_health)
 
 
 # --- INPUT HANDLING ---
@@ -111,6 +123,14 @@ func _physics_process(_delta: float) -> void:
 
 # --- PUBLIC METHODS ---
 
+func take_damage(amount: float) -> void:
+	current_health = clampf(current_health - amount, 0.0, max_health)
+	health_changed.emit(current_health, max_health)
+
+	if current_health <= 0.0:
+		_handle_death()
+
+
 func set_collision_height(target_height: float) -> void:
 	if not collision_shape or not collision_shape.shape:
 		push_error("Player: CollisionShape3D or its Shape resource is missing.")
@@ -134,3 +154,7 @@ func _handle_look_rotation() -> void:
 		camera.rotate_x(-mouse_input.y * mouse_sensitivity)
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
 		mouse_input = Vector2.ZERO
+
+
+func _handle_death() -> void:
+	get_tree().reload_current_scene()

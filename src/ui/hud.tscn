@@ -1,8 +1,11 @@
 [gd_scene format=3 uid="uid://wi8ji8be4xae"]
 
-[node name="HUD_Layer" type="CanvasLayer" unique_id=164575960]
+[ext_resource type="Script" uid="uid://6r7td2skyay7" path="res://src/ui/hud_layer.gd" id="1_eqvli"]
 
-[node name="HUD_Control" type="Control" parent="." unique_id=447691885]
+[node name="HUDLayer" type="CanvasLayer" unique_id=164575960]
+script = ExtResource("1_eqvli")
+
+[node name="HUDControl" type="Control" parent="." unique_id=447691885]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +14,24 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="BottomLeft_MarginContainer" type="MarginContainer" parent="HUD_Control" unique_id=1028340768]
+[node name="TopCenterContainer" type="MarginContainer" parent="HUDControl" unique_id=1059653135]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 40
+
+[node name="HealthBar" type="ProgressBar" parent="HUDControl/TopCenterContainer" unique_id=345550051]
+custom_minimum_size = Vector2(300, 17)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="BottomLeftContainer" type="MarginContainer" parent="HUDControl" unique_id=1028340768]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -23,23 +43,29 @@ mouse_filter = 2
 theme_override_constants/margin_left = 40
 theme_override_constants/margin_bottom = 40
 
-[node name="Tactical_Layout" type="VBoxContainer" parent="HUD_Control/BottomLeft_MarginContainer" unique_id=1111733159]
+[node name="TacticalLayout" type="VBoxContainer" parent="HUDControl/BottomLeftContainer" unique_id=1111733159]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 7
 
-[node name="OverRad_Bar" type="ProgressBar" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout" unique_id=149125128]
+[node name="OverRadBar" type="ProgressBar" parent="HUDControl/BottomLeftContainer/TacticalLayout" unique_id=149125128]
 layout_mode = 2
+show_percentage = false
 
-[node name="Abilities_Row" type="HBoxContainer" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout" unique_id=1951341042]
+[node name="AmbientRadBar" type="ProgressBar" parent="HUDControl/BottomLeftContainer/TacticalLayout" unique_id=1569311680]
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="AbilitiesRow" type="HBoxContainer" parent="HUDControl/BottomLeftContainer/TacticalLayout" unique_id=1951341042]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 7
 
-[node name="Grenade_Slot" type="PanelContainer" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout/Abilities_Row" unique_id=988368799]
+[node name="GrenadeSlot" type="PanelContainer" parent="HUDControl/BottomLeftContainer/TacticalLayout/AbilitiesRow" unique_id=988368799]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
-[node name="Melee_Slot" type="PanelContainer" parent="HUD_Control/BottomLeft_MarginContainer/Tactical_Layout/Abilities_Row" unique_id=1240010779]
+[node name="MeleeSlot" type="PanelContainer" parent="HUDControl/BottomLeftContainer/TacticalLayout/AbilitiesRow" unique_id=1240010779]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2

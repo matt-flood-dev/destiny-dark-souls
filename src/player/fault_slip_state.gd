@@ -9,6 +9,8 @@ class_name FaultSlipState
 
 # --- DATA & REFERENCES ---
 
+const AMBIENT_RAD_COST: float = 10.0
+
 var slip_direction: Vector3 = Vector3.ZERO
 var current_time: float = 0.0
 
@@ -49,6 +51,14 @@ func physics_update(_delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
+	var tarc: TarcManager = player.get_node_or_null("TarcManager")
+	if not tarc or not tarc.consume_ambient_rad(AMBIENT_RAD_COST):
+		if player.move_input != Vector2.ZERO:
+			state_machine.change_state("Move")
+		else:
+			state_machine.change_state("Idle")
+		return
+
 	print("Player entered FaultSlip state.")
 
 	current_time = 0.0

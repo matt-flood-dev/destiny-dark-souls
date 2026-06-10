@@ -69,4 +69,4 @@ mesh = SubResource("CapsuleMesh_5f2sf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -0.2)
 current = true
 
-[node name="HUD_Layer" parent="." unique_id=164575960 instance=ExtResource("14_rl62b")]
+[node name="HUDLayer" parent="." unique_id=164575960 instance=ExtResource("14_rl62b")]

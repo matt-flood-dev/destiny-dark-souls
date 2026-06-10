@@ -9,6 +9,8 @@ class_name WindShearState
 
 # --- DATA & REFERENCES ---
 
+const AMBIENT_RAD_COST: float = 10.0
+
 var shear_direction: Vector3 = Vector3.ZERO
 var current_time: float = 0.0
 
@@ -27,9 +29,11 @@ func update(delta: float) -> void:
 	current_time += delta
 
 	if Input.is_action_just_pressed("jump") and can_double_jump:
-		can_double_jump = false
-		state_machine.change_state("GravShift")
-		return
+		var tarc: TarcManager = player.get_node_or_null("TarcManager")
+		if tarc and tarc.current_ambient_rad >= AMBIENT_RAD_COST:
+			can_double_jump = false
+			state_machine.change_state("GravShift")
+			return
 
 	if current_time >= player.shear_duration:
 		state_machine.change_state("Fall")
@@ -48,6 +52,11 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
+	var tarc: TarcManager = player.get_node_or_null("TarcManager")
+	if not tarc or not tarc.consume_ambient_rad(AMBIENT_RAD_COST):
+		state_machine.change_state("Fall")
+		return
+
 	print("Player entered WindShear state.")
 
 	can_double_jump = true
