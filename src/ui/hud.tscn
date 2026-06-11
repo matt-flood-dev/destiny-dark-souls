@@ -19,17 +19,24 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 40.0
+offset_left = -150.0
+offset_right = 150.0
+offset_bottom = 84.0
 grow_horizontal = 2
 theme_override_constants/margin_top = 40
 
-[node name="HealthBar" type="ProgressBar" parent="HUDControl/TopCenterContainer" unique_id=345550051]
+[node name="TopCenterLayout" type="VBoxContainer" parent="HUDControl/TopCenterContainer" unique_id=588813629]
+layout_mode = 2
+
+[node name="HealthBar" type="ProgressBar" parent="HUDControl/TopCenterContainer/TopCenterLayout" unique_id=345550051]
 custom_minimum_size = Vector2(300, 17)
 layout_mode = 2
 value = 100.0
 show_percentage = false
+
+[node name="StateDebugLabel" type="Label" parent="HUDControl/TopCenterContainer/TopCenterLayout" unique_id=1615638112]
+layout_mode = 2
+horizontal_alignment = 1
 
 [node name="BottomLeftContainer" type="MarginContainer" parent="HUDControl" unique_id=1028340768]
 layout_mode = 1

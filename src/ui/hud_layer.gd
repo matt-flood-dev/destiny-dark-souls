@@ -9,7 +9,8 @@ class_name HUDLayer
 
 # --- DATA & REFERENCES ---
 
-@onready var health_bar: ProgressBar = $HUDControl/TopCenterContainer/HealthBar
+@onready var health_bar: ProgressBar = $HUDControl/TopCenterContainer/TopCenterLayout/HealthBar
+@onready var state_debug_label: Label = $HUDControl/TopCenterContainer/TopCenterLayout/StateDebugLabel
 @onready var over_rad_bar: ProgressBar = $HUDControl/BottomLeftContainer/TacticalLayout/OverRadBar
 @onready var ambient_rad_bar: ProgressBar = $HUDControl/BottomLeftContainer/TacticalLayout/AmbientRadBar
 
@@ -20,6 +21,12 @@ func _ready() -> void:
 	var player_node: Player = get_parent() as Player
 	if player_node:
 		player_node.health_changed.connect(_on_health_changed)
+
+		var sm: StateMachine = player_node.get_node_or_null("StateMachine")
+		if sm:
+			sm.state_changed.connect(_on_state_changed)
+		else:
+			push_error("HUDLayer: Failed to find StateMachine node on Player parent.")
 
 		var tarc: TarcManager = player_node.get_node_or_null("TarcManager")
 		if tarc:
@@ -45,6 +52,11 @@ func _on_health_changed(current: float, max_val: float) -> void:
 	if health_bar:
 		health_bar.max_value = max_val
 		health_bar.value = current
+
+
+func _on_state_changed(new_state_name: String) -> void:
+	if state_debug_label:
+		state_debug_label.text = "STATE: " + new_state_name
 
 
 func _connect_tarc_signals(tarc: TarcManager) -> void:

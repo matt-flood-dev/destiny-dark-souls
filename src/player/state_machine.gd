@@ -3,6 +3,8 @@ class_name StateMachine
 
 # --- SIGNALS ---
 
+signal state_changed(new_state_name: String)
+
 
 # --- CONFIGURATION & EXPORTS ---
 
@@ -30,6 +32,9 @@ func _ready() -> void:
 	if initial_state:
 		current_state = initial_state
 		current_state.enter()
+
+		await get_tree().process_frame
+		state_changed.emit(current_state.name)
 
 
 # --- INPUT HANDLING ---
@@ -66,5 +71,6 @@ func change_state(new_state_name: String) -> void:
 	current_state = target_state
 	current_state.enter()
 
+	state_changed.emit(current_state.name)
 
 # --- PRIVATE METHODS --- 
