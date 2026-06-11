@@ -59,6 +59,7 @@ var target_camera_y: float = 0.8
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var camera:  Camera3D = $Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
+@onready var weapon_raycast: RayCast3D = $Camera3D/WeaponRayCast
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -91,6 +92,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_text_backspace") or (event is InputEventKey and event.pressed and event.keycode == KEY_Q):
 		if Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 			get_tree().quit()
+
+	if event.is_action_pressed("shoot") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		_fire_weapon()
 
 
 # --- UPDATE LOOPS ---
@@ -158,3 +162,19 @@ func _handle_look_rotation() -> void:
 
 func _handle_death() -> void:
 	get_tree().reload_current_scene()
+
+
+func _fire_weapon() -> void:
+	print("Weapon fired!")
+
+	if not weapon_raycast:
+		return
+
+	weapon_raycast.force_raycast_update()
+
+	if weapon_raycast.is_colliding():
+		var target = weapon_raycast.get_collider()
+		print("Hit object: ", target.name)
+
+		if target.has_method("take_damage"):
+			target.take_damage(15.0)
