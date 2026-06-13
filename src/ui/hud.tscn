@@ -14,7 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TopCenterContainer" type="MarginContainer" parent="HUDControl" unique_id=1059653135]
+[node name="VitalsContainer" type="MarginContainer" parent="HUDControl" unique_id=1059653135]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -23,22 +23,31 @@ offset_left = -150.0
 offset_right = 150.0
 offset_bottom = 84.0
 grow_horizontal = 2
+mouse_filter = 2
 theme_override_constants/margin_top = 40
 
-[node name="TopCenterLayout" type="VBoxContainer" parent="HUDControl/TopCenterContainer" unique_id=588813629]
+[node name="VitalsLayout" type="VBoxContainer" parent="HUDControl/VitalsContainer" unique_id=588813629]
 layout_mode = 2
 
-[node name="HealthBar" type="ProgressBar" parent="HUDControl/TopCenterContainer/TopCenterLayout" unique_id=345550051]
+[node name="HealthBar" type="ProgressBar" parent="HUDControl/VitalsContainer/VitalsLayout" unique_id=345550051]
 custom_minimum_size = Vector2(300, 17)
 layout_mode = 2
 value = 100.0
 show_percentage = false
 
-[node name="StateDebugLabel" type="Label" parent="HUDControl/TopCenterContainer/TopCenterLayout" unique_id=1615638112]
+[node name="StateDebugLabel" type="Label" parent="HUDControl/VitalsContainer/VitalsLayout" unique_id=1615638112]
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="BottomLeftContainer" type="MarginContainer" parent="HUDControl" unique_id=1028340768]
+[node name="WeaponFiredDebugLabel" type="Label" parent="HUDControl/VitalsContainer/VitalsLayout" unique_id=1883626316]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="WeaponHitDebugLabel" type="Label" parent="HUDControl/VitalsContainer/VitalsLayout" unique_id=2102321316]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="TacticalContainer" type="MarginContainer" parent="HUDControl" unique_id=1028340768]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -47,32 +56,70 @@ offset_top = -40.0
 offset_right = 40.0
 grow_vertical = 0
 mouse_filter = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_bottom = 40
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_bottom = 20
 
-[node name="TacticalLayout" type="VBoxContainer" parent="HUDControl/BottomLeftContainer" unique_id=1111733159]
+[node name="TacticalLayout" type="VBoxContainer" parent="HUDControl/TacticalContainer" unique_id=2101040728]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 7
+theme_override_constants/separation = 5
 
-[node name="OverRadBar" type="ProgressBar" parent="HUDControl/BottomLeftContainer/TacticalLayout" unique_id=149125128]
+[node name="RadBarRow" type="VBoxContainer" parent="HUDControl/TacticalContainer/TacticalLayout" unique_id=1111733159]
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 5
+
+[node name="OverRadBar" type="ProgressBar" parent="HUDControl/TacticalContainer/TacticalLayout/RadBarRow" unique_id=149125128]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
 show_percentage = false
 
-[node name="AmbientRadBar" type="ProgressBar" parent="HUDControl/BottomLeftContainer/TacticalLayout" unique_id=1569311680]
+[node name="AmbientRadBar" type="ProgressBar" parent="HUDControl/TacticalContainer/TacticalLayout/RadBarRow" unique_id=1569311680]
 layout_mode = 2
+mouse_filter = 2
 value = 100.0
 show_percentage = false
 
-[node name="AbilitiesRow" type="HBoxContainer" parent="HUDControl/BottomLeftContainer/TacticalLayout" unique_id=1951341042]
+[node name="LoadoutRow" type="HBoxContainer" parent="HUDControl/TacticalContainer/TacticalLayout" unique_id=555799092]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 7
 
-[node name="GrenadeSlot" type="PanelContainer" parent="HUDControl/BottomLeftContainer/TacticalLayout/AbilitiesRow" unique_id=988368799]
+[node name="AbilitySlots" type="HBoxContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow" unique_id=1951341042]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="GrenadeSlot" type="PanelContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots" unique_id=988368799]
 custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MeleeSlot" type="PanelContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots" unique_id=1240010779]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="WeaponSlots" type="VBoxContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow" unique_id=1274975808]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="WeaponSlot1" type="PanelContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots" unique_id=153435604]
+custom_minimum_size = Vector2(135, 30)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="AmmoLabel" type="Label" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot1" unique_id=887400474]
 layout_mode = 2
 
-[node name="MeleeSlot" type="PanelContainer" parent="HUDControl/BottomLeftContainer/TacticalLayout/AbilitiesRow" unique_id=1240010779]
-custom_minimum_size = Vector2(64, 64)
+[node name="WeaponSlot2" type="PanelContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots" unique_id=1233839262]
+custom_minimum_size = Vector2(135, 14)
 layout_mode = 2
+mouse_filter = 2
+
+[node name="WeaponSlot3" type="PanelContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots" unique_id=1078089789]
+custom_minimum_size = Vector2(135, 14)
+layout_mode = 2
+mouse_filter = 2

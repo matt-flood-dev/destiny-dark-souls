@@ -4,6 +4,8 @@ class_name Player
 # --- SIGNALS ---
 
 signal health_changed(current: float, max_val: float)
+signal weapon_fired(status_text: String)
+signal weapon_hit(info_text: String)
 
 
 # --- CONFIGURATION & EXPORTS ---
@@ -18,6 +20,10 @@ const JUMP_VELOCITY: float = 4.5
 
 @export_group("Health Settings")
 @export var max_health: float = 100.0
+
+@export_group("Weapon Settings")
+@export var fire_rate: float = 0.3
+@export var max_ammo: int = 12
 
 @export_group("Crouch Settings")
 @export var crouch_move_speed: float = 2.5
@@ -48,6 +54,9 @@ const JUMP_VELOCITY: float = 4.5
 
 var current_health: float = 100.0
 
+var current_ammo: int = 12
+var fire_timer: float = 0.0
+
 var move_input: Vector2 = Vector2.ZERO
 var raw_direction: Vector3 = Vector3.ZERO
 var forward: Vector3 = Vector3.ZERO
@@ -72,6 +81,8 @@ func _ready() -> void:
 	await get_tree().process_frame
 	health_changed.emit(current_health, max_health)
 
+	weapon_fired.emit("WEAPON: Standby")
+
 
 # --- INPUT HANDLING ---
 
@@ -94,7 +105,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_tree().quit()
 
 	if event.is_action_pressed("shoot") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		_fire_weapon()
+		if fire_timer <= 0.0 and current_ammo > 0:
+			_fire_weapon()
+		elif current_ammo <= 0:
+			weapon_fired.emit("WEAPON: Out of Ammo")
+
+	if event.is_action_released("shoot"):
+		weapon_fired.emit("WEAPON: Standby")
 
 
 # --- UPDATE LOOPS ---
@@ -119,6 +136,9 @@ func _process(delta: float) -> void:
 			right = right.normalized()
 
 	raw_direction = (right * move_input.x + forward * move_input.y).normalized()
+
+	if fire_timer > 0.0:
+			fire_timer -= delta
 
 
 func _physics_process(_delta: float) -> void:
@@ -165,6 +185,10 @@ func _handle_death() -> void:
 
 
 func _fire_weapon() -> void:
+	fire_timer = fire_rate
+	current_ammo -= 1
+
+	weapon_fired.emit("WEAPON: Fired (" + str(current_ammo) + "/" + str(max_ammo) + ")")
 	print("Weapon fired!")
 
 	if not weapon_raycast:
@@ -174,7 +198,10 @@ func _fire_weapon() -> void:
 
 	if weapon_raycast.is_colliding():
 		var target = weapon_raycast.get_collider()
-		print("Hit object: ", target.name)
+
+		weapon_hit.emit("HIT: " + target.name)
 
 		if target.has_method("take_damage"):
 			target.take_damage(15.0)
+	else:
+		weapon_hit.emit("HIT: Miss")
