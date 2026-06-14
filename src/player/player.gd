@@ -4,6 +4,7 @@ class_name Player
 # --- SIGNALS ---
 
 signal health_changed(current: float, max_val: float)
+signal ammo_changed(current: int, max_val: int)
 signal weapon_fired(status_text: String)
 signal weapon_hit(info_text: String)
 
@@ -22,8 +23,9 @@ const JUMP_VELOCITY: float = 4.5
 @export var max_health: float = 100.0
 
 @export_group("Weapon Settings")
-@export var fire_rate: float = 0.3
+@export var fire_rate: float = 0.5
 @export var max_ammo: int = 12
+@export var reload_time: float = 1.5
 
 @export_group("Crouch Settings")
 @export var crouch_move_speed: float = 2.5
@@ -56,6 +58,7 @@ var current_health: float = 100.0
 
 var current_ammo: int = 12
 var fire_timer: float = 0.0
+var is_reloading: bool = false
 
 var move_input: Vector2 = Vector2.ZERO
 var raw_direction: Vector3 = Vector3.ZERO
@@ -80,6 +83,7 @@ func _ready() -> void:
 
 	await get_tree().process_frame
 	health_changed.emit(current_health, max_health)
+	ammo_changed.emit(current_ammo, max_ammo)
 
 	weapon_fired.emit("WEAPON: Standby")
 
@@ -105,13 +109,21 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_tree().quit()
 
 	if event.is_action_pressed("shoot") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if is_reloading:
+			return
+
 		if fire_timer <= 0.0 and current_ammo > 0:
 			_fire_weapon()
 		elif current_ammo <= 0:
 			weapon_fired.emit("WEAPON: Out of Ammo")
 
 	if event.is_action_released("shoot"):
-		weapon_fired.emit("WEAPON: Standby")
+		if not is_reloading:
+			weapon_fired.emit("WEAPON: Standby")
+
+	if event.is_action_pressed("reload") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if not is_reloading and current_ammo < max_ammo:
+			_reload_weapon()
 
 
 # --- UPDATE LOOPS ---
@@ -188,7 +200,8 @@ func _fire_weapon() -> void:
 	fire_timer = fire_rate
 	current_ammo -= 1
 
-	weapon_fired.emit("WEAPON: Fired (" + str(current_ammo) + "/" + str(max_ammo) + ")")
+	ammo_changed.emit(current_ammo, max_ammo)
+	weapon_fired.emit("WEAPON: Fired")
 	print("Weapon fired!")
 
 	if not weapon_raycast:
@@ -205,3 +218,21 @@ func _fire_weapon() -> void:
 			target.take_damage(15.0)
 	else:
 		weapon_hit.emit("HIT: Miss")
+
+
+func _reload_weapon() -> void:
+	is_reloading = true
+	weapon_fired.emit("WEAPON: Reloading")
+	print("Reload started")
+
+	await get_tree().create_timer(reload_time).timeout
+
+	if not is_inside_tree():
+		return
+
+	current_ammo = max_ammo
+	is_reloading = false
+	
+	ammo_changed.emit(current_ammo, max_ammo)
+	weapon_fired.emit("WEAPON: Standby")
+	print("Reload completed")

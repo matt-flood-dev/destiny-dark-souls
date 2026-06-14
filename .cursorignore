@@ -1,0 +1,10 @@
+.godot/
+.import/
+export_presets.cfg
+*.blend
+*.fbx
+*.obj
+*.png
+*.jpg
+*.wav
+*.mp3

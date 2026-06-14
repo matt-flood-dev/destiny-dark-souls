@@ -35,7 +35,13 @@ var slot_ultravent_element: String = "None"
 var melee_cooldown_timer: float = 0.0
 var grenade_cooldown_timer: float = 0.0
 
-var current_ambient_rad: float = 100.0
+var current_ambient_rad: float = 100.0:
+	set(value):
+		var clamped := clampf(value, 0.0, max_ambient_rad)
+		if is_equal_approx(current_ambient_rad, clamped):
+			return
+		current_ambient_rad = clamped
+		ambient_rad_changed.emit(current_ambient_rad, max_ambient_rad)
 
 var current_over_rad: float = 0.0:
 	set(value):
@@ -74,8 +80,7 @@ func consume_ambient_rad(amount: float) -> bool:
 		return false
 
 	if current_ambient_rad >= amount:
-		current_ambient_rad = clampf(current_ambient_rad - amount, 0.0, max_ambient_rad)
-		ambient_rad_changed.emit(current_ambient_rad, max_ambient_rad)
+		current_ambient_rad -= amount
 		return true
 
 	return false
@@ -101,5 +106,4 @@ func is_grenade_ready() -> bool:
 
 func _process_ambient_regeneration(delta: float) -> void:
 	if current_ambient_rad < max_ambient_rad:
-		current_ambient_rad = clampf(current_ambient_rad + (ambient_rad_regen_rate * delta), 0.0, max_ambient_rad)
-		ambient_rad_changed.emit(current_ambient_rad, max_ambient_rad)
+		current_ambient_rad += ambient_rad_regen_rate * delta

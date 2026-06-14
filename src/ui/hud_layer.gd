@@ -15,6 +15,7 @@ class_name HUDLayer
 @onready var state_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/StateDebugLabel
 @onready var weapon_fired_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponFiredDebugLabel
 @onready var weapon_hit_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponHitDebugLabel
+@onready var ammo_label: Label = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot1/AmmoLabel
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -23,9 +24,8 @@ func _ready() -> void:
 	var player_node: Player = get_parent() as Player
 	if player_node:
 		player_node.health_changed.connect(_on_health_changed)
-
+		player_node.ammo_changed.connect(_on_ammo_changed)
 		player_node.weapon_fired.connect(_on_weapon_fired)
-
 		player_node.weapon_hit.connect(_on_weapon_hit)
 
 		var sm: StateMachine = player_node.get_node_or_null("StateMachine")
@@ -63,6 +63,11 @@ func _on_health_changed(current: float, max_val: float) -> void:
 func _on_state_changed(new_state_name: String) -> void:
 	if state_debug_label:
 		state_debug_label.text = "STATE: " + new_state_name
+
+
+func _on_ammo_changed(current: int, max_val: int) -> void:
+	if ammo_label:
+		ammo_label.text = str(current) + " / " + str(max_val)
 
 
 func _on_weapon_fired(info_text: String) -> void:
