@@ -73,4 +73,6 @@ func change_state(new_state_name: String) -> void:
 
 	state_changed.emit(current_state.name)
 
-# --- PRIVATE METHODS --- 
+
+# --- PRIVATE METHODS ---
+

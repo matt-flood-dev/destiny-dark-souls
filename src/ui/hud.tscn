@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://6r7td2skyay7" path="res://src/ui/hud_layer.gd" id="1_eqvli"]
 [ext_resource type="Script" uid="uid://dycdpy2o4idvn" path="res://src/ui/ability_slot.gd" id="2_abslot"]
+[ext_resource type="Script" path="res://src/ui/radar_widget.gd" id="3_radar"]
 
 [node name="HUDLayer" type="CanvasLayer" unique_id=164575960]
 script = ExtResource("1_eqvli")
@@ -14,6 +15,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="RadarContainer" type="MarginContainer" parent="HUDControl" unique_id=1982746501]
+layout_mode = 1
+anchors_preset = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+
+[node name="RadarWidget" type="Control" parent="HUDControl/RadarContainer" unique_id=1982746502]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_radar")
 
 [node name="VitalsContainer" type="MarginContainer" parent="HUDControl" unique_id=1059653135]
 layout_mode = 1

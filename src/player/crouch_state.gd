@@ -80,6 +80,7 @@ func physics_update(delta: float) -> void:
 			player.velocity.x = move_toward(player.velocity.x, 0.0, player.FRICTION * delta)
 			player.velocity.z = move_toward(player.velocity.z, 0.0, player.FRICTION * delta)
 
+
 # --- PUBLIC METHODS ---
 
 func enter() -> void:

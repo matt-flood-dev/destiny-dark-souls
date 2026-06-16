@@ -1,6 +1,9 @@
 extends PanelContainer
 class_name AbilitySlot
 
+# --- SIGNALS ---
+
+
 # --- CONFIGURATION & EXPORTS ---
 
 @export var ready_color: Color = Color(0.9, 0.55, 0.12, 1.0)
@@ -34,10 +37,16 @@ func _notification(what: int) -> void:
 		_apply_fill()
 
 
+# --- INPUT HANDLING ---
+
+
+# --- UPDATE LOOPS ---
+
+
 # --- PUBLIC METHODS ---
 
 func set_charge_progress(ratio: float) -> void:
-	var clamped := clampf(ratio, 0.0, 1.0)
+	var clamped: float = clampf(ratio, 0.0, 1.0)
 	if is_equal_approx(_charge_progress, clamped):
 		return
 
@@ -48,7 +57,7 @@ func set_charge_progress(ratio: float) -> void:
 # --- PRIVATE METHODS ---
 
 func _apply_panel_style() -> void:
-	var style := StyleBoxFlat.new()
+	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
 	style.border_color = border_color
 	style.set_border_width_all(1)
@@ -60,12 +69,12 @@ func _apply_fill() -> void:
 	if not is_node_ready():
 		return
 
-	var slot_height := _content.size.y
+	var slot_height: float = _content.size.y
 	if slot_height <= 0.0:
 		return
 
-	var filled_height := slot_height * _charge_progress
-	var dim_height := slot_height - filled_height
+	var filled_height: float = slot_height * _charge_progress
+	var dim_height: float = slot_height - filled_height
 
 	_fill.offset_left = 0.0
 	_fill.offset_right = 0.0

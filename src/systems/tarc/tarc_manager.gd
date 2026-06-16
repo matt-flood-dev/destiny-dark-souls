@@ -10,17 +10,12 @@ signal melee_activated
 signal grenade_activated
 
 
-
-# --- SYSTEM CONSTANTS & CONFIG ---
+# --- CONFIGURATION & EXPORTS ---
 
 const MELEE_COOLDOWN_MAX: float = 4.0
 const GRENADE_COOLDOWN_MAX: float = 6.0
 const OVER_RAD_MAX: float = 100.0
 const ULTRAVENT_RELEASE_RATE: float = 15.0
-
-
-
-# --- CONFIGURATION & EXPORTS ---
 
 @export_group("Pool Balances")
 @export var max_ambient_rad: float = 100.0
@@ -43,7 +38,7 @@ var grenade_cooldown_timer: float = 0.0
 
 var current_ambient_rad: float = 100.0:
 	set(value):
-		var clamped := clampf(value, 0.0, max_ambient_rad)
+		var clamped: float = clampf(value, 0.0, max_ambient_rad)
 		if is_equal_approx(current_ambient_rad, clamped):
 			return
 		current_ambient_rad = clamped
@@ -51,7 +46,7 @@ var current_ambient_rad: float = 100.0:
 
 var current_over_rad: float = 0.0:
 	set(value):
-		var clamped := clampf(value, 0.0, OVER_RAD_MAX)
+		var clamped: float = clampf(value, 0.0, OVER_RAD_MAX)
 		if is_equal_approx(current_over_rad, clamped):
 			return
 		current_over_rad = clamped
