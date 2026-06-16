@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://wi8ji8be4xae"]
 
 [ext_resource type="Script" uid="uid://6r7td2skyay7" path="res://src/ui/hud_layer.gd" id="1_eqvli"]
+[ext_resource type="Script" uid="uid://dycdpy2o4idvn" path="res://src/ui/ability_slot.gd" id="2_abslot"]
 
 [node name="HUDLayer" type="CanvasLayer" unique_id=164575960]
 script = ExtResource("1_eqvli")
@@ -95,10 +96,76 @@ theme_override_constants/separation = 3
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 mouse_filter = 2
+script = ExtResource("2_abslot")
+ready_color = Color(0.95, 0.45, 0.1, 1)
+
+[node name="SlotContent" type="Control" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot" unique_id=981415406]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot/SlotContent" unique_id=251144615]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Fill" type="ColorRect" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot/SlotContent" unique_id=1902930975]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="DimOverlay" type="ColorRect" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot/SlotContent" unique_id=362752380]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+mouse_filter = 2
 
 [node name="MeleeSlot" type="PanelContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots" unique_id=1240010779]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_abslot")
+ready_color = Color(0.88, 0.88, 0.94, 1)
+
+[node name="SlotContent" type="Control" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot" unique_id=1562327681]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot/SlotContent" unique_id=1525487431]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Fill" type="ColorRect" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot/SlotContent" unique_id=1499609462]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="DimOverlay" type="ColorRect" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot/SlotContent" unique_id=1700942217]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
 mouse_filter = 2
 
 [node name="WeaponSlots" type="VBoxContainer" parent="HUDControl/TacticalContainer/TacticalLayout/LoadoutRow" unique_id=1274975808]
