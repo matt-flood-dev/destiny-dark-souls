@@ -15,6 +15,7 @@ const SPEED: float = 5.0
 const ACCELERATION: float = 40.0
 const FRICTION: float = 25.0
 const JUMP_VELOCITY: float = 4.5
+const SIDEARM_WEAPON_SCRIPT: Script = preload("res://src/weapons/sidearm_weapon.gd")
 
 @export var mouse_sensitivity: float = 0.002
 @export var camera_lerp_speed: float = 10.0
@@ -23,6 +24,7 @@ const JUMP_VELOCITY: float = 4.5
 @export var max_health: float = 100.0
 
 @export_group("Weapon Settings")
+@export var sidearm_scene: PackedScene
 @export var fire_rate: float = 0.5
 @export var max_ammo: int = 12
 @export var reload_time: float = 1.5
@@ -68,10 +70,13 @@ var right: Vector3 = Vector3.ZERO
 var mouse_input: Vector2 = Vector2.ZERO
 var target_camera_y: float = 0.8
 
+var _sidearm = null
+
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
-@onready var camera:  Camera3D = $Camera3D
+@onready var camera: Camera3D = $Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var weapon_raycast: RayCast3D = $Camera3D/WeaponRayCast
+@onready var weapon_socket: Marker3D = $Camera3D/WeaponSocket
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -79,6 +84,7 @@ var target_camera_y: float = 0.8
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
+	_spawn_sidearm()
 	current_health = max_health
 
 	await get_tree().process_frame
@@ -184,6 +190,24 @@ func set_collision_height(target_height: float) -> void:
 
 # --- PRIVATE METHODS ---
 
+func _spawn_sidearm() -> void:
+	if not sidearm_scene:
+		return
+
+	if not weapon_socket:
+		push_error("Player: WeaponSocket node is missing.")
+		return
+
+	var weapon_instance: Node3D = sidearm_scene.instantiate() as Node3D
+	if not weapon_instance:
+		push_error("Player: Failed to instantiate sidearm_scene.")
+		return
+
+	weapon_instance.set_script(SIDEARM_WEAPON_SCRIPT)
+	weapon_socket.add_child(weapon_instance)
+	_sidearm = weapon_instance
+
+
 func _handle_look_rotation() -> void:
 	if mouse_input != Vector2.ZERO:
 		rotate_y(-mouse_input.x * mouse_sensitivity)
@@ -197,8 +221,14 @@ func _handle_death() -> void:
 
 
 func _fire_weapon() -> void:
-	fire_timer = fire_rate
+	if _sidearm and _sidearm.has_method("play_fire"):
+		if not _sidearm.play_fire():
+			return
+	elif fire_timer > 0.0:
+		return
+
 	current_ammo -= 1
+	fire_timer = _get_fire_cooldown_duration()
 
 	ammo_changed.emit(current_ammo, max_ammo)
 	weapon_fired.emit("WEAPON: Fired")
@@ -218,6 +248,15 @@ func _fire_weapon() -> void:
 			target.take_damage(15.0)
 	else:
 		weapon_hit.emit("HIT: Miss")
+
+
+func _get_fire_cooldown_duration() -> float:
+	if _sidearm and _sidearm.has_method("get_fire_cooldown_duration"):
+		var animation_duration: float = _sidearm.get_fire_cooldown_duration()
+		if animation_duration > 0.0:
+			return animation_duration
+
+	return fire_rate
 
 
 func _reload_weapon() -> void:
