@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://6r7td2skyay7" path="res://src/ui/hud_layer.gd" id="1_eqvli"]
 [ext_resource type="Script" uid="uid://dycdpy2o4idvn" path="res://src/ui/ability_slot.gd" id="2_abslot"]
 [ext_resource type="Script" path="res://src/ui/radar_widget.gd" id="3_radar"]
+[ext_resource type="PackedScene" path="res://src/ui/checkpoint_menu.tscn" id="4_checkpoint_menu"]
 
 [node name="HUDLayer" type="CanvasLayer" unique_id=164575960]
 script = ExtResource("1_eqvli")
@@ -205,6 +206,28 @@ custom_minimum_size = Vector2(135, 14)
 layout_mode = 2
 mouse_filter = 2
 
+[node name="SouliteContainer" type="MarginContainer" parent="HUDControl" unique_id=420479201]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -48.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 28
+
+[node name="SouliteLabel" type="Label" parent="HUDControl/SouliteContainer" unique_id=420479200]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.82, 0.45, 1)
+theme_override_font_sizes/font_size = 22
+text = "Soulite: 0"
+horizontal_alignment = 2
+
 [node name="ReticleContainer" type="VBoxContainer" parent="HUDControl" unique_id=1945306534]
 custom_minimum_size = Vector2(6, 6)
 layout_mode = 1
@@ -262,3 +285,14 @@ alignment = 1
 custom_minimum_size = Vector2(2, 3)
 layout_mode = 2
 mouse_filter = 2
+
+[node name="CheckpointMenu" parent="HUDControl" instance=ExtResource("4_checkpoint_menu")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0

@@ -8,6 +8,8 @@ signal soulite_changed(current: int)
 
 # --- CONFIGURATION & EXPORTS ---
 
+@export var starting_soulite: int = 100
+
 
 # --- DATA & REFERENCES ---
 
@@ -16,6 +18,9 @@ var current_soulite: int = 0
 
 # --- LIFECYCLE CALLBACKS ---
 
+func _ready() -> void:
+	current_soulite = maxi(starting_soulite, 0)
+	soulite_changed.emit(current_soulite)
 
 # --- INPUT HANDLING ---
 

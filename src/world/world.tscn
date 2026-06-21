@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://veyxwdwnm7bx" path="res://src/player/player.tscn" id="1_1k4gi"]
 [ext_resource type="Shader" uid="uid://byrgwvceiwciy" path="res://src/world/world.gdshader" id="1_6fy3g"]
+[ext_resource type="Script" path="res://src/world/checkpoint.gd" id="2_checkpoint"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kueii"]
 size = Vector3(20, 1, 20)
@@ -13,6 +14,22 @@ shader = ExtResource("1_6fy3g")
 [sub_resource type="BoxMesh" id="BoxMesh_1k4gi"]
 material = SubResource("ShaderMaterial_jte2u")
 size = Vector3(20, 1, 20)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_checkpoint"]
+height = 2.5
+radius = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_checkpoint"]
+albedo_color = Color(0.85, 0.55, 0.1, 1)
+emission_enabled = true
+emission = Color(0.9, 0.45, 0.05, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_checkpoint"]
+material = SubResource("StandardMaterial3D_checkpoint")
+top_radius = 0.6
+bottom_radius = 0.6
+height = 2.5
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1k4gi"]
 
@@ -67,6 +84,17 @@ mesh = SubResource("BoxMesh_1k4gi")
 
 [node name="Player" parent="." unique_id=1939726896 instance=ExtResource("1_1k4gi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="Checkpoint" type="StaticBody3D" parent="." unique_id=420479127]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.8, 5)
+script = ExtResource("2_checkpoint")
+checkpoint_name = "Bonfire Alpha"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Checkpoint" unique_id=420479128]
+shape = SubResource("CylinderShape3D_checkpoint")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Checkpoint" unique_id=420479129]
+mesh = SubResource("CylinderMesh_checkpoint")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1073363272]
 transform = Transform3D(0.70710677, -0.49999997, 0.49999997, 0, 0.70710677, 0.70710677, -0.70710677, -0.49999997, 0.49999997, 0, 0, 0)

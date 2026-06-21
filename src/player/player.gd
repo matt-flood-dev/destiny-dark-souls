@@ -63,8 +63,11 @@ var target_camera_y: float = 0.8
 @onready var camera: Camera3D = $Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var weapon_raycast: RayCast3D = $Camera3D/WeaponRayCast
+@onready var interact_raycast: RayCast3D = $Camera3D/InteractRayCast
 @onready var loadout_manager: LoadoutManager = $LoadoutManager
 @onready var soulite_manager: SouliteManager = $SouliteManager
+@onready var interaction_manager: InteractionManager = $InteractionManager
+@onready var hud_layer: HUDLayer = $HUDLayer
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -75,6 +78,7 @@ func _ready() -> void:
 
 	loadout_manager.ammo_changed.connect(_on_loadout_ammo_changed)
 	loadout_manager.reload_finished.connect(_on_loadout_reload_finished)
+	interaction_manager.setup(self, interact_raycast)
 
 	await get_tree().process_frame
 	health_changed.emit(current_health, max_health)
@@ -104,20 +108,35 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_tree().quit()
 
 	if event.is_action_pressed("shoot") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		_try_fire_weapon()
+		if not _is_combat_input_blocked():
+			_try_fire_weapon()
 
 	if event.is_action_released("shoot"):
 		if not loadout_manager.is_reloading:
 			_update_weapon_status_label()
 
 	if event.is_action_pressed("reload") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		_try_reload_weapon()
+		if not _is_combat_input_blocked():
+			interaction_manager.begin_interact_hold()
+
+	if event.is_action_released("reload"):
+		var interact_consumed: bool = interaction_manager.complete_interact_hold()
+
+		if _is_combat_input_blocked():
+			return
+
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+			return
+
+		if not interact_consumed:
+			_try_reload_weapon()
 
 
 # --- UPDATE LOOPS ---
 
 func _process(delta: float) -> void:
 	_handle_look_rotation()
+	interaction_manager.process_hold(delta)
 
 	if camera:
 		camera.position.y = lerp(camera.position.y, target_camera_y, camera_lerp_speed * delta)
@@ -158,6 +177,13 @@ func play_weapon_idle() -> void:
 
 func stop_weapon_idle() -> void:
 	loadout_manager.stop_weapon_idle()
+
+
+func open_checkpoint_menu(checkpoint: Checkpoint) -> void:
+	if not hud_layer or not hud_layer.checkpoint_menu:
+		return
+
+	hud_layer.checkpoint_menu.open(self, checkpoint)
 
 
 func set_collision_height(target_height: float) -> void:
@@ -245,3 +271,7 @@ func _update_weapon_status_label() -> void:
 		weapon_fired.emit("WEAPON: Out of Ammo")
 	else:
 		weapon_fired.emit("WEAPON: Standby")
+
+
+func _is_combat_input_blocked() -> bool:
+	return hud_layer and hud_layer.checkpoint_menu and hud_layer.checkpoint_menu.is_open()

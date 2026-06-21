@@ -6,6 +6,7 @@ class_name LoadoutManager
 signal ammo_changed(current: int, max_val: int)
 signal active_weapon_changed(configuration: WeaponDefinitions.Configuration)
 signal reload_finished()
+signal magazines_refilled(configuration: WeaponDefinitions.Configuration)
 
 
 # --- CONFIGURATION & EXPORTS ---
@@ -196,6 +197,90 @@ func add_magazine_slot(configuration: WeaponDefinitions.Configuration) -> void:
 		return
 
 	state.add_magazine_slot()
+
+
+func get_unlocked_configurations() -> Array[WeaponDefinitions.Configuration]:
+	return unlocked_configurations.duplicate()
+
+
+func get_weapon_data(configuration: WeaponDefinitions.Configuration) -> WeaponData:
+	return weapon_data_registry.get(configuration) as WeaponData
+
+
+func get_refill_cost(configuration: WeaponDefinitions.Configuration, rounds: int) -> int:
+	if rounds <= 0:
+		return 0
+
+	var data: WeaponData = get_weapon_data(configuration)
+	if not data:
+		return 0
+
+	return rounds * data.soulite_cost_per_round
+
+
+func get_fill_magazine_cost(configuration: WeaponDefinitions.Configuration, magazine_index: int) -> int:
+	var state: MagazineState = get_magazine_state(configuration)
+	if not state:
+		return 0
+
+	return get_refill_cost(configuration, state.get_missing_rounds(magazine_index))
+
+
+func try_refill_magazine_rounds(
+	configuration: WeaponDefinitions.Configuration,
+	magazine_index: int,
+	rounds: int,
+	soulite_manager: SouliteManager
+) -> int:
+	if rounds <= 0 or not soulite_manager:
+		return 0
+
+	if not is_configuration_unlocked(configuration):
+		return 0
+
+	var state: MagazineState = get_magazine_state(configuration)
+	var data: WeaponData = get_weapon_data(configuration)
+	if not state or not data:
+		return 0
+
+	var missing_rounds: int = state.get_missing_rounds(magazine_index)
+	if missing_rounds <= 0:
+		return 0
+
+	var rounds_to_add: int = mini(rounds, missing_rounds)
+	var cost: int = get_refill_cost(configuration, rounds_to_add)
+	if cost <= 0:
+		return 0
+
+	if not soulite_manager.spend_soulite(cost):
+		return 0
+
+	var added_rounds: int = state.add_rounds(magazine_index, rounds_to_add)
+	if added_rounds <= 0:
+		return 0
+
+	if configuration == get_active_configuration():
+		_emit_ammo_changed()
+
+	magazines_refilled.emit(configuration)
+	return added_rounds
+
+
+func try_fill_magazine(
+	configuration: WeaponDefinitions.Configuration,
+	magazine_index: int,
+	soulite_manager: SouliteManager
+) -> int:
+	var state: MagazineState = get_magazine_state(configuration)
+	if not state:
+		return 0
+
+	return try_refill_magazine_rounds(
+		configuration,
+		magazine_index,
+		state.get_missing_rounds(magazine_index),
+		soulite_manager
+	)
 
 
 # --- PRIVATE METHODS ---

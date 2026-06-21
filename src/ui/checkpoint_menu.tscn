@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://checkpoint_menu_scene"]
+
+[ext_resource type="Script" path="res://src/ui/checkpoint_menu.gd" id="1_checkpoint_menu"]
+
+[node name="CheckpointMenu" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -220.0
+offset_right = 260.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+script = ExtResource("1_checkpoint_menu")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Checkpoint"
+horizontal_alignment = 1
+
+[node name="SouliteLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Soulite: 0"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 280)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MagazineList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Close"

@@ -16,7 +16,8 @@
 [ext_resource type="PackedScene" uid="uid://wi8ji8be4xae" path="res://src/ui/hud.tscn" id="14_rl62b"]
 [ext_resource type="Script" path="res://src/weapons/loadout_manager.gd" id="16_loadout"]
 [ext_resource type="Script" path="res://src/systems/soulite/soulite_manager.gd" id="17_soulite"]
-[ext_resource type="Resource" uid="uid://bweapon_sidearm_data" path="res://src/weapons/data/pistol_sidearm.tres" id="18_sidearm_data"]
+[ext_resource type="Resource" uid="uid://bunga7x6fyag8" path="res://src/weapons/data/pistol_sidearm.tres" id="18_sidearm_data"]
+[ext_resource type="Script" path="res://src/systems/interaction/interaction_manager.gd" id="19_interaction"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_244u8"]
 
@@ -32,6 +33,10 @@ weapon_socket = NodePath("../Camera3D/WeaponSocket")
 
 [node name="SouliteManager" type="Node" parent="." unique_id=420479124]
 script = ExtResource("17_soulite")
+starting_soulite = 100
+
+[node name="InteractionManager" type="Node" parent="." unique_id=420479125]
+script = ExtResource("19_interaction")
 
 [node name="TarcManager" type="Node" parent="." unique_id=199103172]
 script = ExtResource("12_cwolq")
@@ -82,6 +87,9 @@ current = true
 
 [node name="WeaponRayCast" type="RayCast3D" parent="Camera3D" unique_id=1661168725]
 target_position = Vector3(0, 0, -100)
+
+[node name="InteractRayCast" type="RayCast3D" parent="Camera3D" unique_id=420479126]
+target_position = Vector3(0, 0, -4)
 
 [node name="WeaponSocket" type="Marker3D" parent="Camera3D" unique_id=390479123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.3, -0.4)

@@ -93,6 +93,33 @@ func add_magazine_slot() -> void:
 	round_counts.append(0)
 
 
+func get_magazine_count() -> int:
+	return round_counts.size()
+
+
+func get_magazine_rounds(magazine_index: int) -> int:
+	if magazine_index < 0 or magazine_index >= round_counts.size():
+		return 0
+
+	return round_counts[magazine_index]
+
+
+func get_missing_rounds(magazine_index: int) -> int:
+	if magazine_index < 0 or magazine_index >= round_counts.size():
+		return 0
+
+	return mag_capacity - round_counts[magazine_index]
+
+
+func add_rounds(magazine_index: int, rounds: int) -> int:
+	if rounds <= 0 or magazine_index < 0 or magazine_index >= round_counts.size():
+		return 0
+
+	var rounds_to_add: int = mini(rounds, get_missing_rounds(magazine_index))
+	round_counts[magazine_index] += rounds_to_add
+	return rounds_to_add
+
+
 func set_mag_capacity(new_capacity: int) -> void:
 	mag_capacity = new_capacity
 

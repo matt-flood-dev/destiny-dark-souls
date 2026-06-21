@@ -16,6 +16,8 @@ class_name HUDLayer
 @onready var weapon_fired_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponFiredDebugLabel
 @onready var weapon_hit_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponHitDebugLabel
 @onready var ammo_label: Label = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot1/AmmoLabel
+@onready var soulite_label: Label = $HUDControl/SouliteContainer/SouliteLabel
+@onready var checkpoint_menu: CheckpointMenu = $HUDControl/CheckpointMenu
 @onready var grenade_slot: AbilitySlot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot
 @onready var melee_slot: AbilitySlot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot
 
@@ -43,6 +45,13 @@ func _ready() -> void:
 			_connect_tarc_signals(tarc)
 		else:
 			push_error("HUDLayer: Failed to find TarcManager node on Player parent.")
+
+		var soulite: SouliteManager = player_node.get_node_or_null("SouliteManager")
+		if soulite:
+			soulite.soulite_changed.connect(_on_soulite_changed)
+			_on_soulite_changed(soulite.current_soulite)
+		else:
+			push_error("HUDLayer: Failed to find SouliteManager node on Player parent.")
 	else:
 		push_error("HUDLayer: HUD is missing a valid Player parent node context.")
 
@@ -83,6 +92,11 @@ func _on_state_changed(new_state_name: String) -> void:
 func _on_ammo_changed(current: int, max_val: int) -> void:
 	if ammo_label:
 		ammo_label.text = str(current) + " / " + str(max_val)
+
+
+func _on_soulite_changed(current: int) -> void:
+	if soulite_label:
+		soulite_label.text = "Soulite: " + str(current)
 
 
 func _on_weapon_fired(info_text: String) -> void:
