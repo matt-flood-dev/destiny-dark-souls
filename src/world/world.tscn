@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://byrgwvceiwciy" path="res://src/world/world.gdshader" id="1_6fy3g"]
 [ext_resource type="Script" path="res://src/world/checkpoint.gd" id="2_checkpoint"]
 [ext_resource type="Script" path="res://src/world/magazine_pickup.gd" id="3_magazine_pickup"]
+[ext_resource type="Script" path="res://src/world/combat_dummy.gd" id="4_combat_dummy"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kueii"]
 size = Vector3(20, 1, 20)
@@ -44,6 +45,18 @@ emission_energy_multiplier = 0.5
 [sub_resource type="BoxMesh" id="BoxMesh_magazine_pickup"]
 material = SubResource("StandardMaterial3D_magazine_pickup")
 size = Vector3(0.5, 0.35, 0.8)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_combat_dummy"]
+radius = 0.45
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_combat_dummy"]
+albedo_color = Color(0.72, 0.2, 0.2, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_combat_dummy"]
+material = SubResource("StandardMaterial3D_combat_dummy")
+radius = 0.45
+height = 2.0
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1k4gi"]
 
@@ -120,6 +133,16 @@ shape = SubResource("BoxShape3D_magazine_pickup")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SidearmMagazinePickup" unique_id=420479132]
 mesh = SubResource("BoxMesh_magazine_pickup")
+
+[node name="TrainingDummy" type="StaticBody3D" parent="." unique_id=420479133]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2.5, 0)
+script = ExtResource("4_combat_dummy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TrainingDummy" unique_id=420479134]
+shape = SubResource("CapsuleShape3D_combat_dummy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TrainingDummy" unique_id=420479135]
+mesh = SubResource("CapsuleMesh_combat_dummy")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1073363272]
 transform = Transform3D(0.70710677, -0.49999997, 0.49999997, 0, 0.70710677, 0.70710677, -0.70710677, -0.49999997, 0.49999997, 0, 0, 0)
