@@ -108,7 +108,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if event.is_action_released("shoot"):
 		if not loadout_manager.is_reloading:
-			weapon_fired.emit("WEAPON: Standby")
+			_update_weapon_status_label()
 
 	if event.is_action_pressed("reload") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_try_reload_weapon()
@@ -202,7 +202,11 @@ func _try_fire_weapon() -> void:
 	if not fire_result["fired"]:
 		return
 
-	weapon_fired.emit("WEAPON: Fired")
+	if loadout_manager.is_completely_dry():
+		weapon_fired.emit("WEAPON: Out of Ammo")
+	else:
+		weapon_fired.emit("WEAPON: Fired")
+
 	print("Weapon fired!")
 
 	if fire_result["hit"]:
@@ -212,6 +216,10 @@ func _try_fire_weapon() -> void:
 
 
 func _try_reload_weapon() -> void:
+	if loadout_manager.is_completely_dry():
+		weapon_fired.emit("WEAPON: Out of Ammo")
+		return
+
 	if not loadout_manager.can_reload():
 		return
 
@@ -223,7 +231,17 @@ func _try_reload_weapon() -> void:
 func _on_loadout_ammo_changed(current: int, max_val: int) -> void:
 	ammo_changed.emit(current, max_val)
 
+	if not loadout_manager.is_reloading:
+		_update_weapon_status_label()
+
 
 func _on_loadout_reload_finished() -> void:
-	weapon_fired.emit("WEAPON: Standby")
+	_update_weapon_status_label()
 	print("Reload completed")
+
+
+func _update_weapon_status_label() -> void:
+	if loadout_manager.is_completely_dry():
+		weapon_fired.emit("WEAPON: Out of Ammo")
+	else:
+		weapon_fired.emit("WEAPON: Standby")

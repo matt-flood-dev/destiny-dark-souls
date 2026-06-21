@@ -52,6 +52,19 @@ func get_gun_capacity() -> int:
 	return mag_capacity
 
 
+func get_total_rounds() -> int:
+	var total: int = 0
+
+	for round_count in round_counts:
+		total += round_count
+
+	return total
+
+
+func has_any_ammo() -> bool:
+	return get_total_rounds() > 0
+
+
 func has_ammo_in_gun() -> bool:
 	return get_gun_rounds() > 0
 

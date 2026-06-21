@@ -99,6 +99,17 @@ func get_gun_capacity() -> int:
 	return _active_magazine_state.get_gun_capacity()
 
 
+func has_any_ammo() -> bool:
+	if not _active_magazine_state:
+		return false
+
+	return _active_magazine_state.has_any_ammo()
+
+
+func is_completely_dry() -> bool:
+	return not has_any_ammo()
+
+
 func can_fire() -> bool:
 	return fire_timer <= 0.0 and get_gun_rounds() > 0 and not is_reloading
 
