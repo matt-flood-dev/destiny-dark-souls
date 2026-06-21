@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://src/world/checkpoint.gd" id="2_checkpoint"]
 [ext_resource type="Script" path="res://src/world/magazine_pickup.gd" id="3_magazine_pickup"]
 [ext_resource type="Script" path="res://src/world/combat_dummy.gd" id="4_combat_dummy"]
+[ext_resource type="Script" path="res://src/world/simple_enemy.gd" id="5_simple_enemy"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kueii"]
 size = Vector3(20, 1, 20)
@@ -55,6 +56,21 @@ albedo_color = Color(0.72, 0.2, 0.2, 1)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_combat_dummy"]
 material = SubResource("StandardMaterial3D_combat_dummy")
+radius = 0.45
+height = 2.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_simple_enemy"]
+radius = 0.45
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_simple_enemy"]
+albedo_color = Color(0.35, 0.15, 0.55, 1)
+emission_enabled = true
+emission = Color(0.25, 0.1, 0.4, 1)
+emission_energy_multiplier = 0.35
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_simple_enemy"]
+material = SubResource("StandardMaterial3D_simple_enemy")
 radius = 0.45
 height = 2.0
 
@@ -143,6 +159,28 @@ shape = SubResource("CapsuleShape3D_combat_dummy")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="TrainingDummy" unique_id=420479135]
 mesh = SubResource("CapsuleMesh_combat_dummy")
+
+[node name="Hostile1" type="CharacterBody3D" parent="." unique_id=420479136]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2.5, 5)
+script = ExtResource("5_simple_enemy")
+display_name = "Hostile"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile1" unique_id=420479137]
+shape = SubResource("CapsuleShape3D_simple_enemy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hostile1" unique_id=420479138]
+mesh = SubResource("CapsuleMesh_simple_enemy")
+
+[node name="Hostile2" type="CharacterBody3D" parent="." unique_id=420479139]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2.5, -5)
+script = ExtResource("5_simple_enemy")
+display_name = "Hostile"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile2" unique_id=420479140]
+shape = SubResource("CapsuleShape3D_simple_enemy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hostile2" unique_id=420479141]
+mesh = SubResource("CapsuleMesh_simple_enemy")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1073363272]
 transform = Transform3D(0.70710677, -0.49999997, 0.49999997, 0, 0.70710677, 0.70710677, -0.70710677, -0.49999997, 0.49999997, 0, 0, 0)

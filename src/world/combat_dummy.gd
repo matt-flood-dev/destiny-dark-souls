@@ -26,7 +26,7 @@ var is_dead: bool = false
 # --- LIFECYCLE CALLBACKS ---
 
 func _ready() -> void:
-	add_to_group("combat_dummy")
+	add_to_group(BonfireRespawn.GROUP_NAME)
 	current_health = max_health
 
 
@@ -59,13 +59,6 @@ func respawn() -> void:
 		mesh_instance.visible = true
 
 	respawned.emit()
-
-
-static func respawn_all(scene_tree: SceneTree) -> void:
-	for node in scene_tree.get_nodes_in_group("combat_dummy"):
-		var dummy: CombatDummy = node as CombatDummy
-		if dummy:
-			dummy.respawn()
 
 
 # --- PRIVATE METHODS ---

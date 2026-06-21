@@ -30,7 +30,7 @@ func interact(target_player: Player) -> void:
 	if not target_player:
 		return
 
-	CombatDummy.respawn_all(get_tree())
+	BonfireRespawn.respawn_all(get_tree())
 	target_player.open_checkpoint_menu(self)
 
 

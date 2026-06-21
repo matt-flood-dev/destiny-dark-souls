@@ -187,6 +187,10 @@ func open_checkpoint_menu(checkpoint: Checkpoint) -> void:
 	hud_layer.checkpoint_menu.open(self, checkpoint)
 
 
+func is_checkpoint_menu_open() -> bool:
+	return _is_combat_input_blocked()
+
+
 func set_collision_height(target_height: float) -> void:
 	if not collision_shape or not collision_shape.shape:
 		push_error("Player: CollisionShape3D or its Shape resource is missing.")
