@@ -173,6 +173,16 @@ func take_damage(amount: float) -> void:
 		_handle_death()
 
 
+func play_sidearm_idle() -> void:
+	if _sidearm and _sidearm.has_method("play_idle"):
+		_sidearm.play_idle()
+
+
+func stop_sidearm_idle() -> void:
+	if _sidearm and _sidearm.has_method("stop_idle"):
+		_sidearm.stop_idle()
+
+
 func set_collision_height(target_height: float) -> void:
 	if not collision_shape or not collision_shape.shape:
 		push_error("Player: CollisionShape3D or its Shape resource is missing.")

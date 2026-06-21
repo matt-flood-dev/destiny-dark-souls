@@ -53,10 +53,12 @@ func physics_update(delta: float) -> void:
 
 func enter() -> void:
 	print("Player entered Idle state.")
+	player.play_sidearm_idle()
 
 
 func exit() -> void:
 	print("Player exited Idle state.")
+	player.stop_sidearm_idle()
 
 
 # --- PRIVATE METHODS ---

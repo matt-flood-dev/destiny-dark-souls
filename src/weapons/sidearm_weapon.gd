@@ -7,11 +7,13 @@ class_name SidearmWeapon
 # --- CONFIGURATION & EXPORTS ---
 
 @export var fire_animation_name: String = "sidearm_fire"
+@export var idle_animation_name: String = "sidearm_idle"
 
 
 # --- DATA & REFERENCES ---
 
 var _animation_player: AnimationPlayer
+var _idle_active: bool = false
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -21,6 +23,13 @@ func _ready() -> void:
 
 	if not _animation_player:
 		push_warning("SidearmWeapon: No AnimationPlayer found on sidearm.")
+		return
+
+	if _animation_player.has_animation(idle_animation_name):
+		var idle_animation: Animation = _animation_player.get_animation(idle_animation_name)
+		idle_animation.loop_mode = Animation.LOOP_LINEAR
+
+	_animation_player.animation_finished.connect(_on_animation_finished)
 
 
 # --- INPUT HANDLING ---
@@ -56,7 +65,44 @@ func get_fire_cooldown_duration() -> float:
 	return _animation_player.get_animation(fire_animation_name).length
 
 
+func play_idle() -> void:
+	_idle_active = true
+	_try_play_idle()
+
+
+func stop_idle() -> void:
+	_idle_active = false
+
+	if not _animation_player:
+		return
+
+	if _animation_player.is_playing() and _animation_player.current_animation == idle_animation_name:
+		_animation_player.stop()
+
+
 # --- PRIVATE METHODS ---
+
+func _try_play_idle() -> void:
+	if not _idle_active or not _animation_player:
+		return
+
+	if _is_fire_animation_playing():
+		return
+
+	if not _animation_player.has_animation(idle_animation_name):
+		push_warning("SidearmWeapon: Missing animation '" + idle_animation_name + "'.")
+		return
+
+	if _animation_player.is_playing() and _animation_player.current_animation == idle_animation_name:
+		return
+
+	_animation_player.play(idle_animation_name)
+
+
+func _on_animation_finished(animation_name: StringName) -> void:
+	if animation_name == fire_animation_name:
+		_try_play_idle()
+
 
 func _is_fire_animation_playing() -> bool:
 	return _animation_player.is_playing() and _animation_player.current_animation == fire_animation_name
