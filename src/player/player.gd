@@ -63,8 +63,8 @@ var target_camera_y: float = 0.8
 @onready var camera: Camera3D = $Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var weapon_raycast: RayCast3D = $Camera3D/WeaponRayCast
-@onready var loadout_manager = $LoadoutManager
-@onready var soulite_manager = $SouliteManager
+@onready var loadout_manager: LoadoutManager = $LoadoutManager
+@onready var soulite_manager: SouliteManager = $SouliteManager
 
 
 # --- LIFECYCLE CALLBACKS ---
@@ -95,11 +95,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-	if event.is_action_pressed("restart_scene"):
+	if DebugSettings.ENABLED and event.is_action_pressed("restart_scene"):
 		get_tree().reload_current_scene()
 		return
 
-	if event.is_action_pressed("ui_text_backspace") or (event is InputEventKey and event.pressed and event.keycode == KEY_Q):
+	if DebugSettings.ENABLED and (event.is_action_pressed("ui_text_backspace") or (event is InputEventKey and event.pressed and event.keycode == KEY_Q)):
 		if Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 			get_tree().quit()
 
@@ -207,7 +207,7 @@ func _try_fire_weapon() -> void:
 	else:
 		weapon_fired.emit("WEAPON: Fired")
 
-	print("Weapon fired!")
+	DebugSettings.log("Weapon fired!")
 
 	if fire_result["hit"]:
 		weapon_hit.emit("HIT: " + str(fire_result["target_name"]))
@@ -224,7 +224,7 @@ func _try_reload_weapon() -> void:
 		return
 
 	weapon_fired.emit("WEAPON: Reloading")
-	print("Reload started")
+	DebugSettings.log("Reload started")
 	loadout_manager.start_reload()
 
 
@@ -237,7 +237,7 @@ func _on_loadout_ammo_changed(current: int, max_val: int) -> void:
 
 func _on_loadout_reload_finished() -> void:
 	_update_weapon_status_label()
-	print("Reload completed")
+	DebugSettings.log("Reload completed")
 
 
 func _update_weapon_status_label() -> void:

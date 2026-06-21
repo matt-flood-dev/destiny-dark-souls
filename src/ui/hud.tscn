@@ -205,7 +205,7 @@ custom_minimum_size = Vector2(135, 14)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ReticalContainer" type="VBoxContainer" parent="HUDControl" unique_id=1945306534]
+[node name="ReticleContainer" type="VBoxContainer" parent="HUDControl" unique_id=1945306534]
 custom_minimum_size = Vector2(6, 6)
 layout_mode = 1
 anchors_preset = 8
@@ -223,42 +223,42 @@ mouse_filter = 2
 theme_override_constants/separation = 2
 alignment = 1
 
-[node name="ReticalRow1" type="HBoxContainer" parent="HUDControl/ReticalContainer" unique_id=1915822006]
+[node name="ReticleRow1" type="HBoxContainer" parent="HUDControl/ReticleContainer" unique_id=1915822006]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ReticalTop" type="ColorRect" parent="HUDControl/ReticalContainer/ReticalRow1" unique_id=979107539]
+[node name="ReticleTop" type="ColorRect" parent="HUDControl/ReticleContainer/ReticleRow1" unique_id=979107539]
 custom_minimum_size = Vector2(2, 3)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ReticalRow2" type="HBoxContainer" parent="HUDControl/ReticalContainer" unique_id=110762470]
+[node name="ReticleRow2" type="HBoxContainer" parent="HUDControl/ReticleContainer" unique_id=110762470]
 layout_mode = 2
 theme_override_constants/separation = 2
 alignment = 1
 
-[node name="ReticalMiddle1" type="ColorRect" parent="HUDControl/ReticalContainer/ReticalRow2" unique_id=2063487456]
+[node name="ReticleMiddle1" type="ColorRect" parent="HUDControl/ReticleContainer/ReticleRow2" unique_id=2063487456]
 custom_minimum_size = Vector2(3, 2)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ReticalMiddle2" type="ColorRect" parent="HUDControl/ReticalContainer/ReticalRow2" unique_id=1447868084]
+[node name="ReticleMiddle2" type="ColorRect" parent="HUDControl/ReticleContainer/ReticleRow2" unique_id=1447868084]
 custom_minimum_size = Vector2(2, 2)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ReticalMiddle3" type="ColorRect" parent="HUDControl/ReticalContainer/ReticalRow2" unique_id=1483444853]
+[node name="ReticleMiddle3" type="ColorRect" parent="HUDControl/ReticleContainer/ReticleRow2" unique_id=1483444853]
 custom_minimum_size = Vector2(3, 2)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ReticalRow3" type="HBoxContainer" parent="HUDControl/ReticalContainer" unique_id=796481248]
+[node name="ReticleRow3" type="HBoxContainer" parent="HUDControl/ReticleContainer" unique_id=796481248]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ReticalBottom" type="ColorRect" parent="HUDControl/ReticalContainer/ReticalRow3" unique_id=1847190631]
+[node name="ReticleBottom" type="ColorRect" parent="HUDControl/ReticleContainer/ReticleRow3" unique_id=1847190631]
 custom_minimum_size = Vector2(2, 3)
 layout_mode = 2
 mouse_filter = 2

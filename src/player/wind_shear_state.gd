@@ -57,7 +57,7 @@ func enter() -> void:
 		state_machine.change_state("Fall")
 		return
 
-	print("Player entered WindShear state.")
+	DebugSettings.log("Player entered WindShear state.")
 
 	can_double_jump = true
 	can_air_dodge = false
@@ -78,7 +78,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited WindShear state.")
+	DebugSettings.log("Player exited WindShear state.")
 
 
 # --- PRIVATE METHODS ---

@@ -148,7 +148,7 @@ func activate_ultravent() -> bool:
 	current_over_rad = 0.0
 	is_ultravent_primed = false
 	ultravent_activated.emit()
-	print("Ultravent activated!")
+	DebugSettings.log("Ultravent activated!")
 	return true
 
 

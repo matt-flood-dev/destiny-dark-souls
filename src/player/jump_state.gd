@@ -51,7 +51,7 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
-	print("Player entered Jump state.")
+	DebugSettings.log("Player entered Jump state.")
 
 	can_double_jump = true
 
@@ -65,7 +65,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited Jump state.")
+	DebugSettings.log("Player exited Jump state.")
 
 
 # --- PRIVATE METHODS ---

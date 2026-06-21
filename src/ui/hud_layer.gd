@@ -16,8 +16,8 @@ class_name HUDLayer
 @onready var weapon_fired_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponFiredDebugLabel
 @onready var weapon_hit_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponHitDebugLabel
 @onready var ammo_label: Label = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot1/AmmoLabel
-@onready var grenade_slot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot
-@onready var melee_slot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot
+@onready var grenade_slot: AbilitySlot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot
+@onready var melee_slot: AbilitySlot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot
 
 var _tarc: TarcManager
 
@@ -46,6 +46,8 @@ func _ready() -> void:
 	else:
 		push_error("HUDLayer: HUD is missing a valid Player parent node context.")
 
+	_apply_debug_hud()
+
 
 # --- INPUT HANDLING ---
 
@@ -72,8 +74,10 @@ func _on_health_changed(current: float, max_val: float) -> void:
 
 
 func _on_state_changed(new_state_name: String) -> void:
-	if state_debug_label:
-		state_debug_label.text = "STATE: " + new_state_name
+	if not DebugSettings.ENABLED or not state_debug_label:
+		return
+
+	state_debug_label.text = "STATE: " + new_state_name
 
 
 func _on_ammo_changed(current: int, max_val: int) -> void:
@@ -82,13 +86,17 @@ func _on_ammo_changed(current: int, max_val: int) -> void:
 
 
 func _on_weapon_fired(info_text: String) -> void:
-	if weapon_fired_debug_label:
-		weapon_fired_debug_label.text = info_text
+	if not DebugSettings.ENABLED or not weapon_fired_debug_label:
+		return
+
+	weapon_fired_debug_label.text = info_text
 
 
 func _on_weapon_hit(info_text: String) -> void:
-	if weapon_hit_debug_label:
-		weapon_hit_debug_label.text = info_text
+	if not DebugSettings.ENABLED or not weapon_hit_debug_label:
+		return
+
+	weapon_hit_debug_label.text = info_text
 
 
 func _connect_tarc_signals(tarc: TarcManager) -> void:
@@ -111,11 +119,21 @@ func _on_ambient_rad_changed(current: float, max_val: float) -> void:
 		ambient_rad_bar.value = current
 
 
-func _sync_ability_slot(slot, cooldown_remaining: float, cooldown_max: float) -> void:
+func _sync_ability_slot(slot: AbilitySlot, cooldown_remaining: float, cooldown_max: float) -> void:
 	if not slot or cooldown_max <= 0.0:
 		return
 
-	if not slot.has_method("set_charge_progress"):
-		return
-
 	slot.set_charge_progress(1.0 - (cooldown_remaining / cooldown_max))
+
+
+func _apply_debug_hud() -> void:
+	var debug_visible: bool = DebugSettings.ENABLED
+
+	if state_debug_label:
+		state_debug_label.visible = debug_visible
+
+	if weapon_fired_debug_label:
+		weapon_fired_debug_label.visible = debug_visible
+
+	if weapon_hit_debug_label:
+		weapon_hit_debug_label.visible = debug_visible

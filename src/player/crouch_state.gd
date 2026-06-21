@@ -84,7 +84,7 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
-	print("Player entered Crouch state.")
+	DebugSettings.log("Player entered Crouch state.")
 	just_entered = true
 
 	player.target_camera_y = player.camera_crouch_y
@@ -93,7 +93,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited Crouch state.")
+	DebugSettings.log("Player exited Crouch state.")
 
 	if is_slipping:
 		is_slipping = false

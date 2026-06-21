@@ -59,7 +59,7 @@ func enter() -> void:
 			state_machine.change_state("Idle")
 		return
 
-	print("Player entered FaultSlip state.")
+	DebugSettings.log("Player entered FaultSlip state.")
 
 	current_time = 0.0
 
@@ -70,7 +70,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited FaultSlip state.")
+	DebugSettings.log("Player exited FaultSlip state.")
 
 	player.velocity.x *= 0.5
 	player.velocity.z *= 0.5

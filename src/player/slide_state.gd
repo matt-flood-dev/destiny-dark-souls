@@ -45,7 +45,7 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
-	print("Player entered Slide state.")
+	DebugSettings.log("Player entered Slide state.")
 
 	current_time = 0.0
 
@@ -64,7 +64,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited Slide state.")
+	DebugSettings.log("Player exited Slide state.")
 
 
 # --- PRIVATE METHODS ---

@@ -61,11 +61,11 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
-	print("Player entered Sprint state.")
+	DebugSettings.log("Player entered Sprint state.")
 
 
 func exit() -> void:
-	print("Player exited Sprint state.")
+	DebugSettings.log("Player exited Sprint state.")
 
 
 # --- PRIVATE METHODS ---

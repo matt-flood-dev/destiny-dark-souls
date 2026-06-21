@@ -55,7 +55,7 @@ func enter() -> void:
 		state_machine.change_state("Fall")
 		return
 
-	print("Player entered GravShift state.")
+	DebugSettings.log("Player entered GravShift state.")
 
 	player.velocity.y = player.JUMP_VELOCITY
 
@@ -67,7 +67,7 @@ func enter() -> void:
 
 
 func exit() -> void:
-	print("Player exited GravShift state.")
+	DebugSettings.log("Player exited GravShift state.")
 
 
 # --- PRIVATE METHODS ---

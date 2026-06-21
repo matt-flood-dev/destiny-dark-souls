@@ -52,12 +52,12 @@ func physics_update(delta: float) -> void:
 # --- PUBLIC METHODS ---
 
 func enter() -> void:
-	print("Player entered Idle state.")
+	DebugSettings.log("Player entered Idle state.")
 	player.play_weapon_idle()
 
 
 func exit() -> void:
-	print("Player exited Idle state.")
+	DebugSettings.log("Player exited Idle state.")
 	player.stop_weapon_idle()
 
 
