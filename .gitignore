@@ -3,6 +3,9 @@
 *.translation
 *.worker.js
 
+# Blender autosave backups
+*.blend1
+
 # OS-specific clutter
 .DS_Store
 Thumbs.db
