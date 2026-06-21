@@ -73,6 +73,7 @@ var target_camera_y: float = 0.8
 # --- LIFECYCLE CALLBACKS ---
 
 func _ready() -> void:
+	add_to_group("player")
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	current_health = max_health
 

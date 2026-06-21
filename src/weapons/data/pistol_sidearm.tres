@@ -1,20 +1,18 @@
-[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3 uid="uid://bunga7x6fyag8"]
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://bunga7x6fyag8"]
 
 [ext_resource type="Script" uid="uid://sovq6wip77xr" path="res://src/weapons/weapon_data.gd" id="1_weapon_data"]
 [ext_resource type="PackedScene" uid="uid://cguv6x7q13td2" path="res://assets/sidearm_master.glb" id="2_sidearm_scene"]
 
 [resource]
 script = ExtResource("1_weapon_data")
-frame = 0
-configuration = 0
 display_name = "Sidearm"
 weapon_scene = ExtResource("2_sidearm_scene")
 fire_rate = 0.5
-fire_cooldown_multiplier = 1.0
 reload_time = 1.5
 damage = 15.0
 base_mag_capacity = 12
 starting_magazine_count = 1
+max_magazine_count = 3
 soulite_cost_per_round = 1
 fire_animation_name = "sidearm_fire"
 idle_animation_name = "sidearm_idle"

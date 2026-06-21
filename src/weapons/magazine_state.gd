@@ -11,6 +11,7 @@ extends RefCounted
 
 var configuration: WeaponDefinitions.Configuration = WeaponDefinitions.Configuration.PISTOL_SIDEARM
 var mag_capacity: int = 12
+var max_magazine_count: int = 0
 var capacity_upgrade_level: int = 0
 var gun_mag_index: int = 0
 var round_counts: Array[int] = []
@@ -30,6 +31,7 @@ var round_counts: Array[int] = []
 func setup_initial(data: WeaponData) -> void:
 	configuration = data.configuration
 	mag_capacity = data.base_mag_capacity
+	max_magazine_count = data.max_magazine_count
 	capacity_upgrade_level = 0
 	gun_mag_index = 0
 	round_counts.clear()
@@ -89,8 +91,19 @@ func perform_reload_swap() -> bool:
 	return true
 
 
-func add_magazine_slot() -> void:
+func can_add_magazine_slot() -> bool:
+	if max_magazine_count <= 0:
+		return false
+
+	return round_counts.size() < max_magazine_count
+
+
+func add_magazine_slot() -> bool:
+	if not can_add_magazine_slot():
+		return false
+
 	round_counts.append(0)
+	return true
 
 
 func get_magazine_count() -> int:

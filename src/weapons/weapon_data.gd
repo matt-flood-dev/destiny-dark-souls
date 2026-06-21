@@ -20,6 +20,7 @@ extends Resource
 @export_group("Magazines")
 @export var base_mag_capacity: int = 0
 @export var starting_magazine_count: int = 0
+@export var max_magazine_count: int = 0
 @export var soulite_cost_per_round: int = 0
 
 @export_group("Animations")

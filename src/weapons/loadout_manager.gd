@@ -7,6 +7,7 @@ signal ammo_changed(current: int, max_val: int)
 signal active_weapon_changed(configuration: WeaponDefinitions.Configuration)
 signal reload_finished()
 signal magazines_refilled(configuration: WeaponDefinitions.Configuration)
+signal magazine_slot_added(configuration: WeaponDefinitions.Configuration, magazine_count: int)
 
 
 # --- CONFIGURATION & EXPORTS ---
@@ -37,6 +38,7 @@ var frame_configuration: Dictionary = {
 var active_slot_index: int = 0
 var magazine_states: Dictionary = {}
 var weapon_data_registry: Dictionary = {}
+var collected_magazine_pickup_ids: Array[String] = []
 
 var _active_weapon: WeaponBase = null
 var _active_weapon_data: WeaponData = null
@@ -191,12 +193,58 @@ func get_magazine_state(configuration: WeaponDefinitions.Configuration) -> Magaz
 	return magazine_states.get(configuration) as MagazineState
 
 
-func add_magazine_slot(configuration: WeaponDefinitions.Configuration) -> void:
+func can_add_magazine_slot(configuration: WeaponDefinitions.Configuration) -> bool:
+	if not is_configuration_unlocked(configuration):
+		return false
+
 	var state: MagazineState = get_magazine_state(configuration)
 	if not state:
+		return false
+
+	return state.can_add_magazine_slot()
+
+
+func try_add_magazine_slot(configuration: WeaponDefinitions.Configuration) -> bool:
+	if not can_add_magazine_slot(configuration):
+		return false
+
+	var state: MagazineState = get_magazine_state(configuration)
+	if not state:
+		return false
+
+	if not state.add_magazine_slot():
+		return false
+
+	magazine_slot_added.emit(configuration, state.get_magazine_count())
+
+	if DebugSettings.ENABLED:
+		var data: WeaponData = get_weapon_data(configuration)
+		var weapon_name: String = data.display_name if data else str(configuration)
+		DebugSettings.log(
+			"LoadoutManager: Added magazine slot for "
+			+ weapon_name
+			+ " ("
+			+ str(state.get_magazine_count())
+			+ "/"
+			+ str(state.max_magazine_count)
+			+ ")"
+		)
+
+	return true
+
+
+func has_collected_magazine_pickup(pickup_id: String) -> bool:
+	if pickup_id.is_empty():
+		return false
+
+	return pickup_id in collected_magazine_pickup_ids
+
+
+func mark_magazine_pickup_collected(pickup_id: String) -> void:
+	if pickup_id.is_empty() or pickup_id in collected_magazine_pickup_ids:
 		return
 
-	state.add_magazine_slot()
+	collected_magazine_pickup_ids.append(pickup_id)
 
 
 func get_unlocked_configurations() -> Array[WeaponDefinitions.Configuration]:
