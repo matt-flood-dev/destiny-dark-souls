@@ -14,7 +14,9 @@
 [ext_resource type="Script" uid="uid://c1kgkeigw1ddu" path="res://src/player/fall_state.gd" id="10_2smqc"]
 [ext_resource type="Script" uid="uid://7a6owkthig7d" path="res://src/systems/tarc/tarc_manager.gd" id="12_cwolq"]
 [ext_resource type="PackedScene" uid="uid://wi8ji8be4xae" path="res://src/ui/hud.tscn" id="14_rl62b"]
-[ext_resource type="PackedScene" uid="uid://cguv6x7q13td2" path="res://assets/sidearm_master.glb" id="15_sidearm"]
+[ext_resource type="Script" path="res://src/weapons/loadout_manager.gd" id="16_loadout"]
+[ext_resource type="Script" path="res://src/systems/soulite/soulite_manager.gd" id="17_soulite"]
+[ext_resource type="Resource" uid="uid://bweapon_sidearm_data" path="res://src/weapons/data/pistol_sidearm.tres" id="18_sidearm_data"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_244u8"]
 
@@ -22,7 +24,14 @@
 
 [node name="Player" type="CharacterBody3D" unique_id=1939726896]
 script = ExtResource("1_4anbu")
-sidearm_scene = ExtResource("15_sidearm")
+
+[node name="LoadoutManager" type="Node" parent="." unique_id=420479123 node_paths=PackedStringArray("weapon_socket")]
+script = ExtResource("16_loadout")
+starting_weapon_data = ExtResource("18_sidearm_data")
+weapon_socket = NodePath("../Camera3D/WeaponSocket")
+
+[node name="SouliteManager" type="Node" parent="." unique_id=420479124]
+script = ExtResource("17_soulite")
 
 [node name="TarcManager" type="Node" parent="." unique_id=199103172]
 script = ExtResource("12_cwolq")

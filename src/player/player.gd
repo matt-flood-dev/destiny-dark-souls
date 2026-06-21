@@ -15,19 +15,12 @@ const SPEED: float = 5.0
 const ACCELERATION: float = 40.0
 const FRICTION: float = 25.0
 const JUMP_VELOCITY: float = 4.5
-const SIDEARM_WEAPON_SCRIPT: Script = preload("res://src/weapons/sidearm_weapon.gd")
 
 @export var mouse_sensitivity: float = 0.002
 @export var camera_lerp_speed: float = 10.0
 
 @export_group("Health Settings")
 @export var max_health: float = 100.0
-
-@export_group("Weapon Settings")
-@export var sidearm_scene: PackedScene
-@export var fire_rate: float = 0.5
-@export var max_ammo: int = 12
-@export var reload_time: float = 1.5
 
 @export_group("Crouch Settings")
 @export var crouch_move_speed: float = 2.5
@@ -58,10 +51,6 @@ const SIDEARM_WEAPON_SCRIPT: Script = preload("res://src/weapons/sidearm_weapon.
 
 var current_health: float = 100.0
 
-var current_ammo: int = 12
-var fire_timer: float = 0.0
-var is_reloading: bool = false
-
 var move_input: Vector2 = Vector2.ZERO
 var raw_direction: Vector3 = Vector3.ZERO
 var forward: Vector3 = Vector3.ZERO
@@ -70,26 +59,26 @@ var right: Vector3 = Vector3.ZERO
 var mouse_input: Vector2 = Vector2.ZERO
 var target_camera_y: float = 0.8
 
-var _sidearm = null
-
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var camera: Camera3D = $Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var weapon_raycast: RayCast3D = $Camera3D/WeaponRayCast
-@onready var weapon_socket: Marker3D = $Camera3D/WeaponSocket
+@onready var loadout_manager = $LoadoutManager
+@onready var soulite_manager = $SouliteManager
 
 
 # --- LIFECYCLE CALLBACKS ---
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
-	_spawn_sidearm()
 	current_health = max_health
+
+	loadout_manager.ammo_changed.connect(_on_loadout_ammo_changed)
+	loadout_manager.reload_finished.connect(_on_loadout_reload_finished)
 
 	await get_tree().process_frame
 	health_changed.emit(current_health, max_health)
-	ammo_changed.emit(current_ammo, max_ammo)
+	loadout_manager.equip_active_weapon()
 
 	weapon_fired.emit("WEAPON: Standby")
 
@@ -115,21 +104,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_tree().quit()
 
 	if event.is_action_pressed("shoot") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		if is_reloading:
-			return
-
-		if fire_timer <= 0.0 and current_ammo > 0:
-			_fire_weapon()
-		elif current_ammo <= 0:
-			weapon_fired.emit("WEAPON: Out of Ammo")
+		_try_fire_weapon()
 
 	if event.is_action_released("shoot"):
-		if not is_reloading:
+		if not loadout_manager.is_reloading:
 			weapon_fired.emit("WEAPON: Standby")
 
 	if event.is_action_pressed("reload") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		if not is_reloading and current_ammo < max_ammo:
-			_reload_weapon()
+		_try_reload_weapon()
 
 
 # --- UPDATE LOOPS ---
@@ -143,20 +125,17 @@ func _process(delta: float) -> void:
 	move_input = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 
 	if camera:
-			var camera_basis: Basis = camera.global_transform.basis
-			forward = camera_basis.z
-			right = camera_basis.x
+		var camera_basis: Basis = camera.global_transform.basis
+		forward = camera_basis.z
+		right = camera_basis.x
 
-			forward.y = 0.0
-			right.y = 0.0
+		forward.y = 0.0
+		right.y = 0.0
 
-			forward = forward.normalized()
-			right = right.normalized()
+		forward = forward.normalized()
+		right = right.normalized()
 
 	raw_direction = (right * move_input.x + forward * move_input.y).normalized()
-
-	if fire_timer > 0.0:
-			fire_timer -= delta
 
 
 func _physics_process(_delta: float) -> void:
@@ -173,14 +152,12 @@ func take_damage(amount: float) -> void:
 		_handle_death()
 
 
-func play_sidearm_idle() -> void:
-	if _sidearm and _sidearm.has_method("play_idle"):
-		_sidearm.play_idle()
+func play_weapon_idle() -> void:
+	loadout_manager.play_weapon_idle()
 
 
-func stop_sidearm_idle() -> void:
-	if _sidearm and _sidearm.has_method("stop_idle"):
-		_sidearm.stop_idle()
+func stop_weapon_idle() -> void:
+	loadout_manager.stop_weapon_idle()
 
 
 func set_collision_height(target_height: float) -> void:
@@ -200,24 +177,6 @@ func set_collision_height(target_height: float) -> void:
 
 # --- PRIVATE METHODS ---
 
-func _spawn_sidearm() -> void:
-	if not sidearm_scene:
-		return
-
-	if not weapon_socket:
-		push_error("Player: WeaponSocket node is missing.")
-		return
-
-	var weapon_instance: Node3D = sidearm_scene.instantiate() as Node3D
-	if not weapon_instance:
-		push_error("Player: Failed to instantiate sidearm_scene.")
-		return
-
-	weapon_instance.set_script(SIDEARM_WEAPON_SCRIPT)
-	weapon_socket.add_child(weapon_instance)
-	_sidearm = weapon_instance
-
-
 func _handle_look_rotation() -> void:
 	if mouse_input != Vector2.ZERO:
 		rotate_y(-mouse_input.x * mouse_sensitivity)
@@ -230,58 +189,41 @@ func _handle_death() -> void:
 	get_tree().reload_current_scene()
 
 
-func _fire_weapon() -> void:
-	if _sidearm and _sidearm.has_method("play_fire"):
-		if not _sidearm.play_fire():
-			return
-	elif fire_timer > 0.0:
+func _try_fire_weapon() -> void:
+	if loadout_manager.is_reloading:
 		return
 
-	current_ammo -= 1
-	fire_timer = _get_fire_cooldown_duration()
+	if not loadout_manager.can_fire():
+		if loadout_manager.get_gun_rounds() <= 0:
+			weapon_fired.emit("WEAPON: Out of Ammo")
+		return
 
-	ammo_changed.emit(current_ammo, max_ammo)
+	var fire_result: Dictionary = loadout_manager.try_fire(weapon_raycast)
+	if not fire_result["fired"]:
+		return
+
 	weapon_fired.emit("WEAPON: Fired")
 	print("Weapon fired!")
 
-	if not weapon_raycast:
-		return
-
-	weapon_raycast.force_raycast_update()
-
-	if weapon_raycast.is_colliding():
-		var target = weapon_raycast.get_collider()
-
-		weapon_hit.emit("HIT: " + target.name)
-
-		if target.has_method("take_damage"):
-			target.take_damage(15.0)
+	if fire_result["hit"]:
+		weapon_hit.emit("HIT: " + str(fire_result["target_name"]))
 	else:
 		weapon_hit.emit("HIT: Miss")
 
 
-func _get_fire_cooldown_duration() -> float:
-	if _sidearm and _sidearm.has_method("get_fire_cooldown_duration"):
-		var animation_duration: float = _sidearm.get_fire_cooldown_duration()
-		if animation_duration > 0.0:
-			return animation_duration
-
-	return fire_rate
-
-
-func _reload_weapon() -> void:
-	is_reloading = true
-	weapon_fired.emit("WEAPON: Reloading")
-	print("Reload started")
-
-	await get_tree().create_timer(reload_time).timeout
-
-	if not is_inside_tree():
+func _try_reload_weapon() -> void:
+	if not loadout_manager.can_reload():
 		return
 
-	current_ammo = max_ammo
-	is_reloading = false
-	
-	ammo_changed.emit(current_ammo, max_ammo)
+	weapon_fired.emit("WEAPON: Reloading")
+	print("Reload started")
+	loadout_manager.start_reload()
+
+
+func _on_loadout_ammo_changed(current: int, max_val: int) -> void:
+	ammo_changed.emit(current, max_val)
+
+
+func _on_loadout_reload_finished() -> void:
 	weapon_fired.emit("WEAPON: Standby")
 	print("Reload completed")

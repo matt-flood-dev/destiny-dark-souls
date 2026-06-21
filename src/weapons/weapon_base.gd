@@ -1,5 +1,5 @@
 extends Node3D
-class_name SidearmWeapon
+class_name WeaponBase
 
 # --- SIGNALS ---
 
@@ -12,6 +12,7 @@ class_name SidearmWeapon
 
 # --- DATA & REFERENCES ---
 
+var _weapon_data: WeaponData
 var _animation_player: AnimationPlayer
 var _idle_active: bool = false
 
@@ -22,7 +23,7 @@ func _ready() -> void:
 	_animation_player = _find_animation_player(self)
 
 	if not _animation_player:
-		push_warning("SidearmWeapon: No AnimationPlayer found on sidearm.")
+		push_warning("WeaponBase: No AnimationPlayer found on weapon.")
 		return
 
 	if _animation_player.has_animation(idle_animation_name):
@@ -40,12 +41,26 @@ func _ready() -> void:
 
 # --- PUBLIC METHODS ---
 
+func configure(data: WeaponData) -> void:
+	_weapon_data = data
+
+	if not data:
+		return
+
+	fire_animation_name = data.fire_animation_name
+	idle_animation_name = data.idle_animation_name
+
+
+func get_weapon_data() -> WeaponData:
+	return _weapon_data
+
+
 func play_fire() -> bool:
 	if not _animation_player:
 		return false
 
 	if not _animation_player.has_animation(fire_animation_name):
-		push_warning("SidearmWeapon: Missing animation '" + fire_animation_name + "'.")
+		push_warning("WeaponBase: Missing animation '" + fire_animation_name + "'.")
 		return false
 
 	if _is_fire_animation_playing():
@@ -57,12 +72,18 @@ func play_fire() -> bool:
 
 func get_fire_cooldown_duration() -> float:
 	if not _animation_player:
-		return 0.0
+		return _get_fallback_fire_rate()
 
 	if not _animation_player.has_animation(fire_animation_name):
-		return 0.0
+		return _get_fallback_fire_rate()
 
-	return _animation_player.get_animation(fire_animation_name).length
+	var animation_length: float = _animation_player.get_animation(fire_animation_name).length
+	var multiplier: float = 1.0
+
+	if _weapon_data:
+		multiplier = _weapon_data.fire_cooldown_multiplier
+
+	return animation_length * multiplier
 
 
 func play_idle() -> void:
@@ -82,6 +103,13 @@ func stop_idle() -> void:
 
 # --- PRIVATE METHODS ---
 
+func _get_fallback_fire_rate() -> float:
+	if _weapon_data:
+		return _weapon_data.fire_rate
+
+	return 0.5
+
+
 func _try_play_idle() -> void:
 	if not _idle_active or not _animation_player:
 		return
@@ -90,7 +118,7 @@ func _try_play_idle() -> void:
 		return
 
 	if not _animation_player.has_animation(idle_animation_name):
-		push_warning("SidearmWeapon: Missing animation '" + idle_animation_name + "'.")
+		push_warning("WeaponBase: Missing animation '" + idle_animation_name + "'.")
 		return
 
 	if _animation_player.is_playing() and _animation_player.current_animation == idle_animation_name:
@@ -106,6 +134,7 @@ func _on_animation_finished(animation_name: StringName) -> void:
 
 func _is_fire_animation_playing() -> bool:
 	return _animation_player.is_playing() and _animation_player.current_animation == fire_animation_name
+
 
 func _find_animation_player(node: Node) -> AnimationPlayer:
 	if node is AnimationPlayer:
