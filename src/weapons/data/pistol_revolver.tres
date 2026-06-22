@@ -1,11 +1,10 @@
-[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://dogqm486jpqsm"]
 
-[ext_resource type="Script" path="res://src/weapons/weapon_data.gd" id="1_weapon_data"]
+[ext_resource type="Script" uid="uid://sovq6wip77xr" path="res://src/weapons/weapon_data.gd" id="1_weapon_data"]
 [ext_resource type="PackedScene" uid="uid://cguv6x7q13td2" path="res://assets/sidearm_master.glb" id="2_revolver_scene"]
 
 [resource]
 script = ExtResource("1_weapon_data")
-frame = 0
 configuration = 1
 display_name = "Revolver"
 weapon_scene = ExtResource("2_revolver_scene")

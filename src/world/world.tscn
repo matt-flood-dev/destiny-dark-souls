@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://s8jmcpb4caiw" path="res://src/world/magazine_pickup.gd" id="3_magazine_pickup"]
 [ext_resource type="Script" uid="uid://bqt7a2kcim8cl" path="res://src/world/combat_dummy.gd" id="4_combat_dummy"]
 [ext_resource type="Script" uid="uid://cphlfvv1molo0" path="res://src/world/simple_enemy.gd" id="5_simple_enemy"]
-[ext_resource type="Script" path="res://src/world/world.gd" id="6_world"]
+[ext_resource type="Script" uid="uid://cdnmedhusgnx3" path="res://src/world/world.gd" id="6_world"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kueii"]
 size = Vector3(20, 1, 20)
@@ -148,8 +148,19 @@ shape = SubResource("BoxShape3D_magazine_pickup")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SidearmMagazinePickup" unique_id=420479132]
 mesh = SubResource("BoxMesh_magazine_pickup")
 
+[node name="SidearmMagazinePickup2" type="StaticBody3D" parent="." unique_id=420479142]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 30, 2.675, -30)
+script = ExtResource("3_magazine_pickup")
+pickup_id = "world_sidearm_mag_02"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SidearmMagazinePickup2" unique_id=420479143]
+shape = SubResource("BoxShape3D_magazine_pickup")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SidearmMagazinePickup2" unique_id=420479144]
+mesh = SubResource("BoxMesh_magazine_pickup")
+
 [node name="TrainingDummy" type="StaticBody3D" parent="." unique_id=420479133]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.5, -5)
 script = ExtResource("4_combat_dummy")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TrainingDummy" unique_id=420479134]
@@ -159,7 +170,7 @@ shape = SubResource("CapsuleShape3D_combat_dummy")
 mesh = SubResource("CapsuleMesh_combat_dummy")
 
 [node name="Hostile1" type="CharacterBody3D" parent="." unique_id=420479136]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2.5, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2.5, 5)
 script = ExtResource("5_simple_enemy")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile1" unique_id=420479137]
@@ -176,6 +187,36 @@ script = ExtResource("5_simple_enemy")
 shape = SubResource("CapsuleShape3D_simple_enemy")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Hostile2" unique_id=420479141]
+mesh = SubResource("CapsuleMesh_simple_enemy")
+
+[node name="Hostile3" type="CharacterBody3D" parent="." unique_id=420479148]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 3.5, -30)
+script = ExtResource("5_simple_enemy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile3" unique_id=420479149]
+shape = SubResource("CapsuleShape3D_simple_enemy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hostile3" unique_id=420479150]
+mesh = SubResource("CapsuleMesh_simple_enemy")
+
+[node name="Hostile4" type="CharacterBody3D" parent="." unique_id=420479151]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3.5, -25)
+script = ExtResource("5_simple_enemy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile4" unique_id=420479152]
+shape = SubResource("CapsuleShape3D_simple_enemy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hostile4" unique_id=420479153]
+mesh = SubResource("CapsuleMesh_simple_enemy")
+
+[node name="Hostile5" type="CharacterBody3D" parent="." unique_id=420479154]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 4.5, -30)
+script = ExtResource("5_simple_enemy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile5" unique_id=420479155]
+shape = SubResource("CapsuleShape3D_simple_enemy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hostile5" unique_id=420479156]
 mesh = SubResource("CapsuleMesh_simple_enemy")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1073363272]
