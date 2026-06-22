@@ -50,6 +50,7 @@ const JUMP_VELOCITY: float = 4.5
 # --- DATA & REFERENCES ---
 
 var current_health: float = 100.0
+var _is_dead: bool = false
 
 var move_input: Vector2 = Vector2.ZERO
 var raw_direction: Vector3 = Vector3.ZERO
@@ -78,6 +79,8 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	current_health = max_health
 
+	_apply_bonfire_respawn_position()
+
 	loadout_manager.ammo_changed.connect(_on_loadout_ammo_changed)
 	loadout_manager.reload_finished.connect(_on_loadout_reload_finished)
 	loadout_manager.active_weapon_changed.connect(_on_active_weapon_changed)
@@ -91,6 +94,9 @@ func _ready() -> void:
 	loadout_manager.equip_active_weapon()
 
 	weapon_fired.emit("WEAPON: Standby")
+
+	if CheckpointManager.should_show_death_screen():
+		await _show_post_death_screen()
 
 
 # --- INPUT HANDLING ---
@@ -145,11 +151,19 @@ func _unhandled_input(event: InputEvent) -> void:
 # --- UPDATE LOOPS ---
 
 func _process(delta: float) -> void:
-	_handle_look_rotation()
-	interaction_manager.process_hold(delta)
+	if is_gameplay_blocked():
+		move_input = Vector2.ZERO
+		raw_direction = Vector3.ZERO
+		mouse_input = Vector2.ZERO
+	else:
+		_handle_look_rotation()
+		interaction_manager.process_hold(delta)
 
 	if camera:
 		camera.position.y = lerp(camera.position.y, target_camera_y, camera_lerp_speed * delta)
+
+	if is_gameplay_blocked():
+		return
 
 	move_input = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 
@@ -167,13 +181,23 @@ func _process(delta: float) -> void:
 	raw_direction = (right * move_input.x + forward * move_input.y).normalized()
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	if is_gameplay_blocked():
+		if is_on_floor():
+			velocity.y = 0.0
+
+		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
+		velocity.z = move_toward(velocity.z, 0.0, FRICTION * delta)
+
 	move_and_slide()
 
 
 # --- PUBLIC METHODS ---
 
 func take_damage(amount: float) -> void:
+	if _is_dead:
+		return
+
 	current_health = clampf(current_health - amount, 0.0, max_health)
 	health_changed.emit(current_health, max_health)
 
@@ -197,7 +221,14 @@ func open_checkpoint_menu(checkpoint: Checkpoint) -> void:
 
 
 func is_checkpoint_menu_open() -> bool:
-	return _is_combat_input_blocked()
+	return hud_layer and hud_layer.checkpoint_menu and hud_layer.checkpoint_menu.is_open()
+
+
+func is_gameplay_blocked() -> bool:
+	if is_checkpoint_menu_open():
+		return true
+
+	return hud_layer != null and hud_layer.is_death_screen_visible()
 
 
 func set_collision_height(target_height: float) -> void:
@@ -226,8 +257,32 @@ func _handle_look_rotation() -> void:
 
 
 func _handle_death() -> void:
-	SouliteStainManager.register_player_death(global_position, soulite_manager.current_soulite)
+	if _is_dead:
+		return
+
+	_is_dead = true
+
+	var carried_soulite: int = soulite_manager.current_soulite
+	SouliteStainManager.register_player_death(global_position, carried_soulite)
+	CheckpointManager.prepare_death_respawn(carried_soulite)
 	get_tree().reload_current_scene()
+
+
+func _apply_bonfire_respawn_position() -> void:
+	if not CheckpointManager.consume_pending_death_respawn():
+		return
+
+	global_position = CheckpointManager.get_respawn_position()
+
+
+func _show_post_death_screen() -> void:
+	if not hud_layer:
+		return
+
+	var subtitle: String = CheckpointManager.consume_death_screen_message()
+	hud_layer.show_death_screen("YOU DIED", subtitle)
+	await get_tree().create_timer(CheckpointManager.get_death_screen_duration()).timeout
+	hud_layer.hide_death_screen()
 
 
 func _try_fire_weapon() -> void:
@@ -375,4 +430,4 @@ func _on_grenade_activated() -> void:
 
 
 func _is_combat_input_blocked() -> bool:
-	return hud_layer and hud_layer.checkpoint_menu and hud_layer.checkpoint_menu.is_open()
+	return is_gameplay_blocked()

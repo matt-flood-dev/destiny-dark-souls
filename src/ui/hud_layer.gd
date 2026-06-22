@@ -21,6 +21,9 @@ class_name HUDLayer
 @onready var weapon_slot_3: PanelContainer = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot3
 @onready var soulite_label: Label = $HUDControl/SouliteContainer/SouliteLabel
 @onready var checkpoint_menu: CheckpointMenu = $HUDControl/CheckpointMenu
+@onready var death_overlay: ColorRect = $HUDControl/DeathOverlay
+@onready var death_title: Label = $HUDControl/DeathOverlay/DeathVBox/DeathTitle
+@onready var death_subtitle: Label = $HUDControl/DeathOverlay/DeathVBox/DeathSubtitle
 @onready var grenade_slot: AbilitySlot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot
 @onready var melee_slot: AbilitySlot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/MeleeSlot
 
@@ -81,6 +84,28 @@ func sync_weapon_slots(active_slot_index: int, loadout_manager: LoadoutManager =
 	_apply_weapon_slot_highlight(weapon_slot_1, active_slot_index == 0, loadout_manager, 0)
 	_apply_weapon_slot_highlight(weapon_slot_2, active_slot_index == 1, loadout_manager, 1)
 	_apply_weapon_slot_highlight(weapon_slot_3, active_slot_index == 2, loadout_manager, 2)
+
+
+func show_death_screen(title: String, subtitle: String) -> void:
+	if death_title:
+		death_title.text = title
+
+	if death_subtitle:
+		death_subtitle.text = subtitle
+
+	if death_overlay:
+		death_overlay.visible = true
+
+
+func hide_death_screen() -> void:
+	if death_overlay:
+		death_overlay.visible = false
+
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+func is_death_screen_visible() -> bool:
+	return death_overlay != null and death_overlay.visible
 
 
 # --- PRIVATE METHODS ---

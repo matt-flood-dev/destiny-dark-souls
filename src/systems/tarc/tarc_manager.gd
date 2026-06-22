@@ -159,7 +159,7 @@ func activate_ultravent() -> bool:
 
 func _is_combat_input_blocked() -> bool:
 	var player: Player = get_parent() as Player
-	return player != null and player.is_checkpoint_menu_open()
+	return player != null and player.is_gameplay_blocked()
 
 
 func _process_ambient_regeneration(delta: float) -> void:

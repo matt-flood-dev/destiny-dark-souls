@@ -43,13 +43,23 @@ func _ready() -> void:
 # --- UPDATE LOOPS ---
 
 func _process(delta: float) -> void:
-	if current_state:
-		current_state.update(delta)
+	if not current_state:
+		return
+
+	if current_state.player.is_gameplay_blocked():
+		return
+
+	current_state.update(delta)
 
 
 func _physics_process(delta: float) -> void:
-	if current_state:
-		current_state.physics_update(delta)
+	if not current_state:
+		return
+
+	if current_state.player.is_gameplay_blocked():
+		return
+
+	current_state.physics_update(delta)
 
 
 # --- PUBLIC METHODS ---

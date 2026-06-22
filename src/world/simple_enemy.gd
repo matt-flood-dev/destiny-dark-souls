@@ -344,7 +344,7 @@ func _is_ai_paused() -> bool:
 	if not _player or not is_instance_valid(_player):
 		return false
 
-	return _player.is_checkpoint_menu_open()
+	return _player.is_gameplay_blocked()
 
 
 func _is_player_within_aggro_range() -> bool:
