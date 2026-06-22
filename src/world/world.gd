@@ -45,8 +45,8 @@ func _spawn_active_stain() -> void:
 		push_error("World: Failed to instantiate SouliteStain.")
 		return
 
-	stain.setup(SouliteStainManager.stain_position, SouliteStainManager.stain_soulite)
 	add_child(stain)
+	stain.setup(SouliteStainManager.stain_position, SouliteStainManager.stain_soulite)
 	_active_stain = stain
 
 
