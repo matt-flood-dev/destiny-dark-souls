@@ -19,7 +19,7 @@ var current_soulite: int = 0
 # --- LIFECYCLE CALLBACKS ---
 
 func _ready() -> void:
-	current_soulite = maxi(starting_soulite, 0)
+	current_soulite = SouliteStainManager.get_starting_soulite_after_respawn(starting_soulite)
 	soulite_changed.emit(current_soulite)
 
 # --- INPUT HANDLING ---

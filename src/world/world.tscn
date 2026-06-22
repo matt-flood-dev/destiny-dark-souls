@@ -2,10 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://veyxwdwnm7bx" path="res://src/player/player.tscn" id="1_1k4gi"]
 [ext_resource type="Shader" uid="uid://byrgwvceiwciy" path="res://src/world/world.gdshader" id="1_6fy3g"]
-[ext_resource type="Script" path="res://src/world/checkpoint.gd" id="2_checkpoint"]
-[ext_resource type="Script" path="res://src/world/magazine_pickup.gd" id="3_magazine_pickup"]
-[ext_resource type="Script" path="res://src/world/combat_dummy.gd" id="4_combat_dummy"]
-[ext_resource type="Script" path="res://src/world/simple_enemy.gd" id="5_simple_enemy"]
+[ext_resource type="Script" uid="uid://bumr6cq4k6a1" path="res://src/world/checkpoint.gd" id="2_checkpoint"]
+[ext_resource type="Script" uid="uid://s8jmcpb4caiw" path="res://src/world/magazine_pickup.gd" id="3_magazine_pickup"]
+[ext_resource type="Script" uid="uid://bqt7a2kcim8cl" path="res://src/world/combat_dummy.gd" id="4_combat_dummy"]
+[ext_resource type="Script" uid="uid://cphlfvv1molo0" path="res://src/world/simple_enemy.gd" id="5_simple_enemy"]
+[ext_resource type="Script" path="res://src/world/world.gd" id="6_world"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kueii"]
 size = Vector3(20, 1, 20)
@@ -49,7 +50,6 @@ size = Vector3(0.5, 0.35, 0.8)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_combat_dummy"]
 radius = 0.45
-height = 2.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_combat_dummy"]
 albedo_color = Color(0.72, 0.2, 0.2, 1)
@@ -57,11 +57,9 @@ albedo_color = Color(0.72, 0.2, 0.2, 1)
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_combat_dummy"]
 material = SubResource("StandardMaterial3D_combat_dummy")
 radius = 0.45
-height = 2.0
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_simple_enemy"]
 radius = 0.45
-height = 2.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_simple_enemy"]
 albedo_color = Color(0.35, 0.15, 0.55, 1)
@@ -72,7 +70,6 @@ emission_energy_multiplier = 0.35
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_simple_enemy"]
 material = SubResource("StandardMaterial3D_simple_enemy")
 radius = 0.45
-height = 2.0
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1k4gi"]
 
@@ -85,6 +82,7 @@ sky = SubResource("Sky_6fy3g")
 ambient_light_source = 3
 
 [node name="World" type="Node3D" unique_id=224339713]
+script = ExtResource("6_world")
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1111873271]
 
@@ -163,7 +161,6 @@ mesh = SubResource("CapsuleMesh_combat_dummy")
 [node name="Hostile1" type="CharacterBody3D" parent="." unique_id=420479136]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2.5, 5)
 script = ExtResource("5_simple_enemy")
-display_name = "Hostile"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile1" unique_id=420479137]
 shape = SubResource("CapsuleShape3D_simple_enemy")
@@ -174,7 +171,6 @@ mesh = SubResource("CapsuleMesh_simple_enemy")
 [node name="Hostile2" type="CharacterBody3D" parent="." unique_id=420479139]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2.5, -5)
 script = ExtResource("5_simple_enemy")
-display_name = "Hostile"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hostile2" unique_id=420479140]
 shape = SubResource("CapsuleShape3D_simple_enemy")

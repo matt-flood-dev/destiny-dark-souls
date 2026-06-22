@@ -217,6 +217,7 @@ func _handle_look_rotation() -> void:
 
 
 func _handle_death() -> void:
+	SouliteStainManager.register_player_death(global_position, soulite_manager.current_soulite)
 	get_tree().reload_current_scene()
 
 

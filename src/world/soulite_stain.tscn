@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://soulite_stain_scene"]
+
+[ext_resource type="Script" path="res://src/world/soulite_stain.gd" id="1_soulite_stain"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_stain"]
+height = 1.2
+radius = 0.75
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stain"]
+transparency = 1
+albedo_color = Color(0.92, 0.82, 0.45, 0.55)
+emission_enabled = true
+emission = Color(0.95, 0.75, 0.2, 1)
+emission_energy_multiplier = 1.2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stain"]
+top_radius = 0.7
+bottom_radius = 0.7
+height = 0.12
+material = SubResource("StandardMaterial3D_stain")
+
+[node name="SouliteStain" type="StaticBody3D"]
+script = ExtResource("1_soulite_stain")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+shape = SubResource("CylinderShape3D_stain")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("CylinderMesh_stain")
