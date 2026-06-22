@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/weapons/weapon_data.gd" id="1_weapon_data"]
+[ext_resource type="PackedScene" uid="uid://cguv6x7q13td2" path="res://assets/sidearm_master.glb" id="2_revolver_scene"]
+
+[resource]
+script = ExtResource("1_weapon_data")
+frame = 0
+configuration = 1
+display_name = "Revolver"
+weapon_scene = ExtResource("2_revolver_scene")
+fire_rate = 0.85
+reload_time = 2.0
+damage = 28.0
+base_mag_capacity = 6
+starting_magazine_count = 1
+max_magazine_count = 3
+soulite_cost_per_round = 1
+fire_animation_name = "sidearm_fire"
+idle_animation_name = "sidearm_idle"

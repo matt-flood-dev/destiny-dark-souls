@@ -67,6 +67,7 @@ var target_camera_y: float = 0.8
 @onready var loadout_manager: LoadoutManager = $LoadoutManager
 @onready var soulite_manager: SouliteManager = $SouliteManager
 @onready var interaction_manager: InteractionManager = $InteractionManager
+@onready var tarc_manager: TarcManager = $TarcManager
 @onready var hud_layer: HUDLayer = $HUDLayer
 
 
@@ -79,7 +80,11 @@ func _ready() -> void:
 
 	loadout_manager.ammo_changed.connect(_on_loadout_ammo_changed)
 	loadout_manager.reload_finished.connect(_on_loadout_reload_finished)
+	loadout_manager.active_weapon_changed.connect(_on_active_weapon_changed)
+	loadout_manager.loadout_changed.connect(_on_loadout_changed)
 	interaction_manager.setup(self, interact_raycast)
+	tarc_manager.melee_activated.connect(_on_melee_activated)
+	tarc_manager.grenade_activated.connect(_on_grenade_activated)
 
 	await get_tree().process_frame
 	health_changed.emit(current_health, max_health)
@@ -131,6 +136,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		if not interact_consumed:
 			_try_reload_weapon()
+
+	if event.is_action_pressed("swap_weapon") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if not _is_combat_input_blocked():
+			_try_swap_weapon(event)
 
 
 # --- UPDATE LOOPS ---
@@ -273,10 +282,96 @@ func _on_loadout_reload_finished() -> void:
 
 
 func _update_weapon_status_label() -> void:
+	var weapon_data: WeaponData = loadout_manager.get_active_weapon_data()
+	var weapon_name: String = weapon_data.display_name if weapon_data else "Weapon"
+
 	if loadout_manager.is_completely_dry():
-		weapon_fired.emit("WEAPON: Out of Ammo")
+		weapon_fired.emit(weapon_name + ": Out of Ammo")
 	else:
-		weapon_fired.emit("WEAPON: Standby")
+		weapon_fired.emit(weapon_name + ": Standby")
+
+
+func _try_swap_weapon(event: InputEvent) -> void:
+	if loadout_manager.is_reloading:
+		return
+
+	var swapped: bool = false
+
+	if event is InputEventKey:
+		if event.physical_keycode == KEY_1:
+			swapped = loadout_manager.switch_to_slot(0)
+		elif event.physical_keycode == KEY_2:
+			swapped = loadout_manager.switch_to_slot(1)
+		elif event.physical_keycode == KEY_3:
+			swapped = loadout_manager.switch_to_slot(2)
+	elif event is InputEventJoypadButton:
+		swapped = loadout_manager.cycle_weapon_slot()
+
+	if swapped:
+		play_weapon_idle()
+		_update_weapon_status_label()
+		var weapon_data: WeaponData = loadout_manager.get_active_weapon_data()
+		if weapon_data and DebugSettings.ENABLED:
+			DebugSettings.log("Swapped to " + weapon_data.display_name)
+
+
+func _on_loadout_changed() -> void:
+	if hud_layer:
+		hud_layer.sync_weapon_slots(
+			loadout_manager.get_active_slot_index(),
+			loadout_manager
+		)
+
+	play_weapon_idle()
+	_update_weapon_status_label()
+
+
+func _on_active_weapon_changed(_configuration: WeaponDefinitions.Configuration) -> void:
+	if hud_layer:
+		hud_layer.sync_weapon_slots(
+			loadout_manager.get_active_slot_index(),
+			loadout_manager
+		)
+
+
+func _on_melee_activated() -> void:
+	if _is_combat_input_blocked():
+		return
+
+	var melee_result: Dictionary = CombatAbilities.perform_melee(self)
+	weapon_fired.emit("MELEE: Struck" if melee_result["hit"] else "MELEE: Whiff")
+
+	if melee_result["hit"]:
+		var target_name: String = str(melee_result["target_name"])
+		var targets_hit: int = melee_result["targets_hit"]
+		if targets_hit > 1:
+			weapon_hit.emit("HIT: " + target_name + " (+" + str(targets_hit - 1) + " more)")
+		else:
+			weapon_hit.emit("HIT: " + target_name)
+	else:
+		weapon_hit.emit("HIT: Miss")
+
+	DebugSettings.log("Melee activated.")
+
+
+func _on_grenade_activated() -> void:
+	if _is_combat_input_blocked():
+		return
+
+	var grenade_result: Dictionary = CombatAbilities.perform_grenade(self, weapon_raycast)
+	weapon_fired.emit("GRENADE: Detonated")
+
+	if grenade_result["hit"]:
+		var target_name: String = str(grenade_result["target_name"])
+		var targets_hit: int = grenade_result["targets_hit"]
+		if targets_hit > 1:
+			weapon_hit.emit("HIT: " + target_name + " (+" + str(targets_hit - 1) + " more)")
+		else:
+			weapon_hit.emit("HIT: " + target_name)
+	else:
+		weapon_hit.emit("HIT: Miss")
+
+	DebugSettings.log("Grenade detonated.")
 
 
 func _is_combat_input_blocked() -> bool:

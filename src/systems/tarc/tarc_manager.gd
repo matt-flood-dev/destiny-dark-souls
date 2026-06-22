@@ -69,6 +69,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
 
+	if _is_combat_input_blocked():
+		return
+
 	if event.is_action_pressed("melee_ability"):
 		activate_melee()
 	elif event.is_action_pressed("grenade_ability"):
@@ -153,6 +156,11 @@ func activate_ultravent() -> bool:
 
 
 # --- PRIVATE METHODS ---
+
+func _is_combat_input_blocked() -> bool:
+	var player: Player = get_parent() as Player
+	return player != null and player.is_checkpoint_menu_open()
+
 
 func _process_ambient_regeneration(delta: float) -> void:
 	if current_ambient_rad < max_ambient_rad:

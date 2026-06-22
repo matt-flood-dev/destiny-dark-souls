@@ -16,6 +16,9 @@ class_name HUDLayer
 @onready var weapon_fired_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponFiredDebugLabel
 @onready var weapon_hit_debug_label: Label = $HUDControl/VitalsContainer/VitalsLayout/WeaponHitDebugLabel
 @onready var ammo_label: Label = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot1/AmmoLabel
+@onready var weapon_slot_1: PanelContainer = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot1
+@onready var weapon_slot_2: PanelContainer = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot2
+@onready var weapon_slot_3: PanelContainer = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/WeaponSlots/WeaponSlot3
 @onready var soulite_label: Label = $HUDControl/SouliteContainer/SouliteLabel
 @onready var checkpoint_menu: CheckpointMenu = $HUDControl/CheckpointMenu
 @onready var grenade_slot: AbilitySlot = $HUDControl/TacticalContainer/TacticalLayout/LoadoutRow/AbilitySlots/GrenadeSlot
@@ -56,6 +59,7 @@ func _ready() -> void:
 		push_error("HUDLayer: HUD is missing a valid Player parent node context.")
 
 	_apply_debug_hud()
+	sync_weapon_slots(0)
 
 
 # --- INPUT HANDLING ---
@@ -72,6 +76,11 @@ func _process(_delta: float) -> void:
 
 
 # --- PUBLIC METHODS ---
+
+func sync_weapon_slots(active_slot_index: int, loadout_manager: LoadoutManager = null) -> void:
+	_apply_weapon_slot_highlight(weapon_slot_1, active_slot_index == 0, loadout_manager, 0)
+	_apply_weapon_slot_highlight(weapon_slot_2, active_slot_index == 1, loadout_manager, 1)
+	_apply_weapon_slot_highlight(weapon_slot_3, active_slot_index == 2, loadout_manager, 2)
 
 
 # --- PRIVATE METHODS ---
@@ -151,3 +160,22 @@ func _apply_debug_hud() -> void:
 
 	if weapon_hit_debug_label:
 		weapon_hit_debug_label.visible = debug_visible
+
+
+func _apply_weapon_slot_highlight(
+	slot: PanelContainer,
+	is_active: bool,
+	loadout_manager: LoadoutManager,
+	slot_index: int
+) -> void:
+	if not slot:
+		return
+
+	var is_filled: bool = loadout_manager != null and loadout_manager.is_slot_filled(slot_index)
+
+	if not is_filled:
+		slot.modulate = Color(0.45, 0.45, 0.5, 0.65)
+	elif is_active:
+		slot.modulate = Color(1.0, 0.92, 0.65, 1.0)
+	else:
+		slot.modulate = Color(0.72, 0.72, 0.78, 1.0)

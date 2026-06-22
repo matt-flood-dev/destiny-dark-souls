@@ -5,6 +5,7 @@ class_name LoadoutManager
 
 signal ammo_changed(current: int, max_val: int)
 signal active_weapon_changed(configuration: WeaponDefinitions.Configuration)
+signal loadout_changed()
 signal reload_finished()
 signal magazines_refilled(configuration: WeaponDefinitions.Configuration)
 signal magazine_slot_added(configuration: WeaponDefinitions.Configuration, magazine_count: int)
@@ -15,6 +16,7 @@ signal magazine_slot_added(configuration: WeaponDefinitions.Configuration, magaz
 const WEAPON_BASE_SCRIPT: Script = preload("res://src/weapons/weapon_base.gd")
 
 @export var starting_weapon_data: WeaponData
+@export var secondary_weapon_data: WeaponData
 @export var weapon_socket: Marker3D
 
 
@@ -25,14 +27,20 @@ var is_reloading: bool = false
 
 var unlocked_configurations: Array[WeaponDefinitions.Configuration] = [
 	WeaponDefinitions.Configuration.PISTOL_SIDEARM,
+	WeaponDefinitions.Configuration.PISTOL_REVOLVER,
 ]
 
-var equipped_frames: Array[WeaponDefinitions.Frame] = [
+var weapon_slots: Array[int] = [
 	WeaponDefinitions.Frame.PISTOL,
+	WeaponDefinitions.SLOT_EMPTY,
+	WeaponDefinitions.SLOT_EMPTY,
 ]
 
 var frame_configuration: Dictionary = {
 	WeaponDefinitions.Frame.PISTOL: WeaponDefinitions.Configuration.PISTOL_SIDEARM,
+	WeaponDefinitions.Frame.RIFLE: WeaponDefinitions.Configuration.RIFLE_CARBINE,
+	WeaponDefinitions.Frame.SPECIAL: WeaponDefinitions.Configuration.SPECIAL_SHOTGUN,
+	WeaponDefinitions.Frame.HEAVY: WeaponDefinitions.Configuration.HEAVY_ROCKET_LAUNCHER,
 }
 
 var active_slot_index: int = 0
@@ -72,12 +80,98 @@ func register_weapon_data(data: WeaponData) -> void:
 	weapon_data_registry[data.configuration] = data
 
 
+func get_slot_frame(slot_index: int) -> int:
+	if slot_index < 0 or slot_index >= WeaponDefinitions.MAX_EQUIPPED_FRAMES:
+		return WeaponDefinitions.SLOT_EMPTY
+
+	return weapon_slots[slot_index]
+
+
+func is_slot_filled(slot_index: int) -> bool:
+	return get_slot_frame(slot_index) != WeaponDefinitions.SLOT_EMPTY
+
+
+func get_filled_slot_indices() -> Array[int]:
+	var filled_slots: Array[int] = []
+
+	for slot_index in range(WeaponDefinitions.MAX_EQUIPPED_FRAMES):
+		if is_slot_filled(slot_index):
+			filled_slots.append(slot_index)
+
+	return filled_slots
+
+
+func get_frame_configuration(frame: WeaponDefinitions.Frame) -> WeaponDefinitions.Configuration:
+	if frame_configuration.has(frame):
+		return frame_configuration[frame] as WeaponDefinitions.Configuration
+
+	return _get_default_configuration_for_frame(frame)
+
+
+func set_weapon_slot_frame(slot_index: int, frame: int) -> bool:
+	if slot_index < 0 or slot_index >= WeaponDefinitions.MAX_EQUIPPED_FRAMES:
+		return false
+
+	if frame != WeaponDefinitions.SLOT_EMPTY:
+		if not _is_frame_unlocked(frame):
+			return false
+
+		if _is_frame_in_other_slot(frame, slot_index):
+			return false
+
+		if not _ensure_frame_configuration(frame):
+			return false
+
+	weapon_slots[slot_index] = frame
+	_normalize_active_slot()
+	_apply_loadout_change()
+	return true
+
+
+func set_frame_configuration(
+	frame: WeaponDefinitions.Frame,
+	configuration: WeaponDefinitions.Configuration
+) -> bool:
+	if WeaponDefinitions.get_frame_for_configuration(configuration) != frame:
+		return false
+
+	if not is_configuration_unlocked(configuration):
+		return false
+
+	if not weapon_data_registry.has(configuration):
+		return false
+
+	frame_configuration[frame] = configuration
+	_apply_loadout_change()
+	return true
+
+
+func is_frame_unlocked(frame: WeaponDefinitions.Frame) -> bool:
+	for configuration in WeaponDefinitions.get_configurations_for_frame(frame):
+		if is_configuration_unlocked(configuration) and weapon_data_registry.has(configuration):
+			return true
+
+	return false
+
+
+func get_unlocked_configurations_for_frame(
+	frame: WeaponDefinitions.Frame
+) -> Array[WeaponDefinitions.Configuration]:
+	var unlocked: Array[WeaponDefinitions.Configuration] = []
+
+	for configuration in WeaponDefinitions.get_configurations_for_frame(frame):
+		if is_configuration_unlocked(configuration) and weapon_data_registry.has(configuration):
+			unlocked.append(configuration)
+
+	return unlocked
+
+
 func get_active_configuration() -> WeaponDefinitions.Configuration:
-	if equipped_frames.is_empty():
+	var active_frame: int = get_slot_frame(active_slot_index)
+	if active_frame == WeaponDefinitions.SLOT_EMPTY:
 		return WeaponDefinitions.Configuration.PISTOL_SIDEARM
 
-	var active_frame: WeaponDefinitions.Frame = equipped_frames[active_slot_index]
-	return frame_configuration.get(active_frame, WeaponDefinitions.Configuration.PISTOL_SIDEARM) as WeaponDefinitions.Configuration
+	return get_frame_configuration(active_frame as WeaponDefinitions.Frame)
 
 
 func get_active_weapon_data() -> WeaponData:
@@ -86,6 +180,49 @@ func get_active_weapon_data() -> WeaponData:
 
 func get_active_weapon() -> WeaponBase:
 	return _active_weapon
+
+
+func get_active_slot_index() -> int:
+	return active_slot_index
+
+
+func switch_to_slot(slot_index: int) -> bool:
+	if is_reloading:
+		return false
+
+	if not is_slot_filled(slot_index):
+		return false
+
+	if slot_index == active_slot_index:
+		return false
+
+	var target_frame: int = get_slot_frame(slot_index)
+	var target_configuration: WeaponDefinitions.Configuration = get_frame_configuration(
+		target_frame as WeaponDefinitions.Frame
+	)
+
+	if not is_configuration_unlocked(target_configuration):
+		return false
+
+	if not weapon_data_registry.has(target_configuration):
+		return false
+
+	active_slot_index = slot_index
+	equip_active_weapon()
+	return true
+
+
+func cycle_weapon_slot() -> bool:
+	var filled_slots: Array[int] = get_filled_slot_indices()
+	if filled_slots.size() <= 1:
+		return false
+
+	var current_index_in_filled: int = filled_slots.find(active_slot_index)
+	if current_index_in_filled < 0:
+		return switch_to_slot(filled_slots[0])
+
+	var next_index_in_filled: int = (current_index_in_filled + 1) % filled_slots.size()
+	return switch_to_slot(filled_slots[next_index_in_filled])
 
 
 func get_gun_rounds() -> int:
@@ -126,6 +263,13 @@ func can_reload() -> bool:
 
 func equip_active_weapon() -> void:
 	_clear_active_weapon()
+
+	if not is_slot_filled(active_slot_index):
+		_active_weapon_data = null
+		_active_magazine_state = null
+		_emit_ammo_changed()
+		loadout_changed.emit()
+		return
 
 	var configuration: WeaponDefinitions.Configuration = get_active_configuration()
 	_active_weapon_data = weapon_data_registry.get(configuration) as WeaponData
@@ -348,6 +492,10 @@ func _initialize_starting_loadout() -> void:
 		register_weapon_data(starting_weapon_data)
 		_create_magazine_state(starting_weapon_data)
 
+	if secondary_weapon_data:
+		register_weapon_data(secondary_weapon_data)
+		_create_magazine_state(secondary_weapon_data)
+
 
 func _create_magazine_state(data: WeaponData) -> void:
 	var state: MagazineState = MagazineState.new()
@@ -446,3 +594,79 @@ func _reload_after_delay() -> void:
 
 func _emit_ammo_changed() -> void:
 	ammo_changed.emit(get_gun_rounds(), get_gun_capacity())
+
+
+func _is_frame_unlocked(frame: int) -> bool:
+	return is_frame_unlocked(frame as WeaponDefinitions.Frame)
+
+
+func _is_frame_in_other_slot(frame: int, slot_index: int) -> bool:
+	for other_slot_index in range(WeaponDefinitions.MAX_EQUIPPED_FRAMES):
+		if other_slot_index == slot_index:
+			continue
+
+		if weapon_slots[other_slot_index] == frame:
+			return true
+
+	return false
+
+
+func _ensure_frame_configuration(frame: int) -> bool:
+	var unlocked_configurations_for_frame: Array[WeaponDefinitions.Configuration] = (
+		get_unlocked_configurations_for_frame(frame as WeaponDefinitions.Frame)
+	)
+
+	if unlocked_configurations_for_frame.is_empty():
+		return false
+
+	var current_configuration: WeaponDefinitions.Configuration = get_frame_configuration(
+		frame as WeaponDefinitions.Frame
+	)
+
+	if (
+		is_configuration_unlocked(current_configuration)
+		and weapon_data_registry.has(current_configuration)
+		and WeaponDefinitions.get_frame_for_configuration(current_configuration) == frame
+	):
+		return true
+
+	frame_configuration[frame] = unlocked_configurations_for_frame[0]
+	return true
+
+
+func _get_default_configuration_for_frame(frame: WeaponDefinitions.Frame) -> WeaponDefinitions.Configuration:
+	var unlocked_configurations_for_frame: Array[WeaponDefinitions.Configuration] = (
+		get_unlocked_configurations_for_frame(frame)
+	)
+
+	if not unlocked_configurations_for_frame.is_empty():
+		return unlocked_configurations_for_frame[0]
+
+	match frame:
+		WeaponDefinitions.Frame.PISTOL:
+			return WeaponDefinitions.Configuration.PISTOL_SIDEARM
+		WeaponDefinitions.Frame.RIFLE:
+			return WeaponDefinitions.Configuration.RIFLE_CARBINE
+		WeaponDefinitions.Frame.SPECIAL:
+			return WeaponDefinitions.Configuration.SPECIAL_SHOTGUN
+		WeaponDefinitions.Frame.HEAVY:
+			return WeaponDefinitions.Configuration.HEAVY_ROCKET_LAUNCHER
+		_:
+			return WeaponDefinitions.Configuration.PISTOL_SIDEARM
+
+
+func _normalize_active_slot() -> void:
+	if is_slot_filled(active_slot_index):
+		return
+
+	var filled_slots: Array[int] = get_filled_slot_indices()
+	if filled_slots.is_empty():
+		active_slot_index = 0
+		return
+
+	active_slot_index = filled_slots[0]
+
+
+func _apply_loadout_change() -> void:
+	equip_active_weapon()
+	loadout_changed.emit()
